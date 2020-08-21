@@ -1,6 +1,6 @@
 NAME:=mnoter
 TYPE:=EXE # This can be either 'EXE' or 'LIB'
-LIBS:=msl
+LIBS:=
 ELIBS:=
 
 TARGET:=$(shell if [ ${TYPE} == "LIB" ]; then\
@@ -23,7 +23,7 @@ HEADERS:=$(shell ls ${SRCDIR}/*.hpp)
 
 LIBFLAGS:=$(shell for i in ${LIBS}; do echo "-L${BINDIR}/$$i"; done) $(shell for i in ${LIBS} ${ELIBS}; do echo "-l$$i"; done) $(shell for i in ${LIBS}; do echo "-I../$$i/src"; done)
 
-CFLAGS:=${CFLAGS} ${LIBFLAGS} -I../msl/src/ -I../msl/src/msl -I../msl/src/msl/String -I../msl/src/msl/Timer -I../msl/src/msl/Vec
+CFLAGS:=${CFLAGS} ${LIBFLAGS}
 
 printStatus=@echo -e "${BOLDGREEN}[$1]:${BOLDCYAN}$2${RESET}"
 

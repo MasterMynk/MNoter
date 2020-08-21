@@ -1,12 +1,12 @@
 EXEC:=mnoter
-TARGETS:=msl ${EXEC} # Any additional library should be add before executable
+TARGETS:=${EXEC} # Any additional library should be add before executable
 DEFS:=
-ARGS:=r 2
+ARGS:=swap 31 1
 
 export SHELL:=/bin/bash
-DEBUGFLAG:=-g
+DEBUGFLAG:=
 CMAKEDEBUGFLAG:=--config Debug
-export CFLAGS:=-Wall -std=c++20 ${DEBUGFLAG} $(shell for i in ${DEFS}; do echo "-D$$i"; done)
+export CFLAGS:=-Wall -O3 -std=c++20 ${DEBUGFLAG} $(shell for i in ${DEFS}; do echo "-D$$i"; done)
 export OFLAG:=-o
 export RM:=rm -rf
 export AR:=ar rcs
@@ -46,7 +46,6 @@ all:
 run: all
 	$(call, printStatus,RUNNING, "${EXEC} with args ${ARGS}")
 	@${BINDIR}/${EXEC}/${EXEC} ${ARGS}
-	@${BINDIR}/${EXEC}/${EXEC} show
 
 clean:
 	@for i in ${TARGETS}; do\

@@ -24,10 +24,17 @@ int main(int argc, char *argv[]) {
                 help();
             else
                 error(std::string(std::string("Unrecognized flag ") + argv[i]).c_str());
-        else if (argv[i][0] == 'a')
+        else if (argv[i][0] == 'a') {
             add(argc - (i + 1), &argv[i + 1], notesPath.c_str(), numPath.c_str());
-        else if (argv[i][0] == 's')
-            show(notesPath.c_str());
-        else if (argv[i][0] == 'r')
+            break;
+        } else if (argv[i][0] == 's') {
+            if (argv[i][1] == 'h')
+                show(notesPath.c_str());
+            else
+                swap(argv[i + 1], argv[i + 2], homeDir.c_str(), notesPath.c_str(), numPath.c_str());
+            break;
+        } else if (argv[i][0] == 'r') {
             remove(argv[i + 1], homeDir, notesPath, numPath.c_str());
+            break;
+        }
 }

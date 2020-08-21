@@ -47,7 +47,6 @@ void add(const int &argc, char **const &argv, const char *const &notesPath,
     fprintf(notes_f, "%s\n", RESET);
 
     fclose(notes_f);
-    exit(0);
 }
 
 void show(const char *const &notesPath) {
@@ -58,8 +57,6 @@ void show(const char *const &notesPath) {
 
     while ((toPrint = fgetc(notes_f)) != EOF)
         printf("%c", toPrint);
-
-    exit(0);
 }
 
 void help() {
@@ -125,14 +122,62 @@ void remove(const char *const index, const std::string &homeDir, const std::stri
     }
 
     fclose(tmp_f);   // Closing it early to avoid complecations while deleteting it later
+    fclose(notes_f);
 
     std::filesystem::remove(notesPath);
     std::filesystem::rename(tmpPath, notesPath);
 
-    fclose(notes_f);
-
     num_f = freopen(numPath, "w", num_f);
     fprintf(num_f, "%d", --lastN);
+}
+
+void swap(const char *const &from, const char *const &to, const char *const &homeDir,
+          const char *const &notesPath, const char *const &numPath) {
+    const std::string tmpPath = std::string(homeDir) + "/tmp.txt";
+    FILE *tmp_f = fopen(tmpPath.c_str(), "w"), *notes_f = fopen(notesPath, "r"),
+         *num_f = fopen(numPath, "r");
+
+    short int lastN, intTo = toInt(to), intFrom = toInt(from), linePtr = 0;
+    char *buff;
+
+    check<bool>(!tmp_f, "Couldn't open temporary file!!");
+    check<bool>(!notes_f,
+                "Couldn't open notes file!!\n"
+                "       You probably don't have any notes yet.\n"
+                "       Add a note  with the command mnoter add");
+    check<bool>(!num_f, "Couldn't open num file!!");
+    check<bool>(!isNum(to), "Please enter a valid number for the destination!!");
+    check<bool>(!isNum(from), "Please specify a valid number for the source!!");
+
+    fscanf(num_f, "%hu", &lastN);
+    check<bool>(intTo > lastN || intFrom > lastN,
+                std::string(std::string("There is no note with the number of ") + to).c_str());
+    if (intTo == intFrom)
+        return;
+
+    for (short i = 0; i < (intTo > intFrom ? intTo : intFrom); ++i)
+        delete[] getLine(notes_f);
+    for (char i = 0; i != ' '; i = fgetc(notes_f))
+        ;
+    buff = getLine(notes_f);
+
+    rewind(notes_f);
+
+    swapHelper(linePtr, (intTo > intFrom ? intFrom : intTo), notes_f, tmp_f, buff);
+    buff = getLine(notes_f);
+
+    swapHelper(linePtr, (intTo > intFrom ? intTo : intFrom), notes_f, tmp_f, buff);
+    delete[] getLine(notes_f);
+
+    copyFileLines(notes_f, tmp_f, ++lastN - linePtr);
+
+    fclose(tmp_f);
+    fclose(notes_f);
+
+    std::filesystem::remove(notesPath);
+    std::filesystem::rename(tmpPath, notesPath);
+
+    fclose(num_f);
 }
 
 void error(const char *const str, const bool &shouldExit, const short &exitCode) {
@@ -198,4 +243,36 @@ char *getLine(FILE *const &fp) {
     str[stringLen] = '\0';
 
     return str;
+}
+
+// This function just does something that was repeated two times in the swap function
+void swapHelper(short &linePtr, const short &val, FILE *&notes_f, FILE *&tmp_f, char *&buff) {
+    for (; linePtr < val; ++linePtr) {
+        char *line = getLine(notes_f);
+
+        fprintf(tmp_f, "%s\n", line);
+        printf("%s\n", line);
+
+        delete[] line;
+    }
+    for (char i = 0; i != ' '; i = fgetc(notes_f)) {
+        fputc(i, tmp_f);
+        putc(i, stdout);
+    }
+    fprintf(tmp_f, " %s\n", buff);
+    printf(" %s\n", buff);
+
+    delete[] buff;
+    ++linePtr;
+}
+
+void copyFileLines(FILE *&from, FILE *&to, const short &numLines) {
+    for (short i = 0; i < numLines; ++i) {
+        char *line = getLine(from);
+
+        fprintf(to, "%s\n", line);
+        printf("%s\n", line);
+
+        delete[] line;
+    }
 }
