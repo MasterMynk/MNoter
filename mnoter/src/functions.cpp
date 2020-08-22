@@ -137,7 +137,7 @@ void swap(const short &from, const short &to, const char *const &homeDir,
     FILE *tmp_f = fopen(tmpPath.c_str(), "w"), *notes_f = fopen(notesPath, "r"),
          *num_f = fopen(numPath, "r");
 
-    short int lastN, linePtr = 0;
+    short int lastN;
     char *buff;
 
     check<bool>(!tmp_f, "Couldn't open temporary file!!");
@@ -158,24 +158,53 @@ void swap(const short &from, const short &to, const char *const &homeDir,
                RESET);
         exit(-1);
     }
-    if (to == from)
-        return;
 
+    /******** Get the note which has the highest number first ********/
+    // This for loop takes me at the start of the line to be copied
     for (short i = 0; i < (to > from ? to : from); ++i)
         delete[] getLine(notes_f);
-    for (char i = 0; i != ' '; i = fgetc(notes_f))
+    fseek(notes_f, 10, SEEK_CUR);   // This moves to the first number
+    for (char i = fgetc(notes_f); i != ' '; i = fgetc(notes_f))
         ;
     buff = getLine(notes_f);
 
     rewind(notes_f);
 
-    swapHelper(linePtr, (to > from ? from : to), notes_f, tmp_f, buff);
+    /* Now go to the note which has the lower number */
+    /* And while doing so copy stuff around */
+    for (short i = 0; i < (to > from ? from : to); ++i) {
+        char *line = getLine(notes_f);
+
+        fprintf(tmp_f, "%s\n", line);
+
+        delete[] line;
+    }
+    for (char i = fgetc(notes_f); i != ' '; i = fgetc(notes_f))
+        fputc(i, tmp_f);
+    fprintf(tmp_f, " %s\n", buff);
+    delete[] buff;
     buff = getLine(notes_f);
 
-    swapHelper(linePtr, (to > from ? to : from), notes_f, tmp_f, buff);
+    for (short i = 1; i < (to > from ? to - from : from - to); ++i) {
+        char *line = getLine(notes_f);
+
+        fprintf(tmp_f, "%s\n", line);
+
+        delete[] line;
+    }
+    for (char i = fgetc(notes_f); i != ' '; i = fgetc(notes_f))
+        fputc(i, tmp_f);
+    fprintf(tmp_f, " %s\n", buff);
+    delete[] buff;
     delete[] getLine(notes_f);
 
-    copyFileLines(notes_f, tmp_f, ++lastN - linePtr);
+    for (short i = 0; i < (to > from ? lastN - to : lastN - from); ++i) {
+        char *line = getLine(notes_f);
+
+        fprintf(tmp_f, "%s\n", line);
+
+        delete[] line;
+    }
 
     fclose(tmp_f);
     fclose(notes_f);
@@ -229,8 +258,9 @@ char *getLine(FILE *const &fp) {
     char *str = nullptr;
     short stringLen = 0, memLen = COMMON_WORD_LEN;
 
-    while (!str)
-        str = new char[COMMON_WORD_LEN]{0};
+    str = new char[COMMON_WORD_LEN]{0};
+    if (!str)
+        throw "Couldn't allocate memory!!\n";
 
     while (true) {
         if (stringLen >= memLen - 1) {
@@ -249,27 +279,6 @@ char *getLine(FILE *const &fp) {
     str[stringLen] = '\0';
 
     return str;
-}
-
-// This function just does something that was repeated two times in the swap function
-void swapHelper(short &linePtr, const short &val, FILE *&notes_f, FILE *&tmp_f, char *&buff) {
-    for (; linePtr < val; ++linePtr) {
-        char *line = getLine(notes_f);
-
-        fprintf(tmp_f, "%s\n", line);
-        printf("%s\n", line);
-
-        delete[] line;
-    }
-    for (char i = 0; i != ' '; i = fgetc(notes_f)) {
-        fputc(i, tmp_f);
-        putc(i, stdout);
-    }
-    fprintf(tmp_f, " %s\n", buff);
-    printf(" %s\n", buff);
-
-    delete[] buff;
-    ++linePtr;
 }
 
 void copyFileLines(FILE *&from, FILE *&to, const short &numLines) {

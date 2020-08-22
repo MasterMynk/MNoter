@@ -19,9 +19,6 @@ short int strLen(const char *const &str);
 char *getLine(FILE *const &fp = stdin);
 void copyFileLines(FILE *&from, FILE *&to, const short &numLines);
 
-// This function just does something that was repeated two times in the swap function
-void swapHelper(short &linePtr, const short &val, FILE *&notes_f, FILE *&tmp_f, char *&buff);
-
 template <typename T>
 void check(const T &val, const char *const message) {
     if (val)
