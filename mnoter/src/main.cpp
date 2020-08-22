@@ -20,9 +20,10 @@ int main(int argc, char *argv[]) {
 
     for (short i = 0; i < argc; ++i)
         if (argv[i][0] == '-')
-            if (argv[i][1] == 'h' || argv[i][2] == 'h')
+            if (argv[i][1] == 'h' || argv[i][2] == 'h'){
                 help();
-            else {
+                break;
+            } else {
                 using namespace std;
 
                 error(string(string("Unrecognized flag ") + argv[i]).c_str());

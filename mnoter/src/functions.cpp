@@ -61,18 +61,20 @@ void show(const char *const &notesPath) {
 
 void help() {
     printf(
-        "MNoter is a small program that can help you keep your notes.%s%s\n"
+        "%sMNoter is a small program that helps you keep your notes.%s\n"
         "mnoter <options> <operation>%s\n"
-        "options:%s The options available are %s-h --help%s Prints out this message.%s\n"
+        "options:%s The options available are %s-h%s,%s --help%s.%s\n"
+        "         -h/--help:%s Prints out this message.%s\n"
         "operation:%s There are three operation this program can perform%s add%s,%s\n\
-           show%s and%s remove%s\n"
+           show%s,%s remove%s and%s swap%s\n"
         "           add:%s Creates a new note with all the parameters specified\n\
                 afterwards.%s\n"
         "           show:%s Prints out all the notes.%s\n"
-        "           remove:%s Removes a note at the number specified afterwards.\n",
-        BOLD, CYAN, PURPLE, WHITE, RED, WHITE, PURPLE, WHITE, RED, WHITE, RED, WHITE, RED, PURPLE,
-        WHITE, PURPLE, WHITE, PURPLE, WHITE);
-    exit(0);
+        "           remove:%s Removes a note at the number specified afterwards.%s\n"
+        "           swap:%s Swaps a note with another based on the numbers specified.%s\n",
+        BOLD WHITE, CYAN, PURPLE, WHITE, RED, WHITE, RED, WHITE, PURPLE, WHITE, PURPLE, WHITE, RED,
+        WHITE, RED, WHITE, RED, WHITE, RED, PURPLE, WHITE, PURPLE, WHITE, PURPLE, WHITE, PURPLE,
+        WHITE, RESET);
 }
 
 void remove(const char *const index, const std::string &homeDir, const std::string &notesPath,
@@ -278,6 +280,6 @@ void printDeleteBuff(FILE *&file, char *&buff) {
 
 void skipLines(FILE *file, const short &lines) {
     for (short i = 0; i < lines; ++i)
-        while(fgetc(file) != '\n')
+        while (fgetc(file) != '\n')
             ;
 }
