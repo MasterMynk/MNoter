@@ -7,13 +7,13 @@ void add(const int &argc, char **const &argv, const char *const &notesPath,
 void show(const char *const &notesPath);
 void remove(const char *const index, const std::string &homeDir, const std::string &notesPath,
             const char *const &numPath);
-void swap(const char *const &from, const char *const &to, const char *const &homeDir,
+void swap(const short &from, const short &to, const char *const &homeDir,
           const char *const &notesPath, const char *const &numPath);
 void help();
 
 void error(const char *const str, const bool &shouldExit = true, const short &exitCode = -1);
 
-bool isNum(const char *const num);
+bool isNum(const char *const str);
 int toInt(const char *const str);
 short int strLen(const char *const &str);
 char *getLine(FILE *const &fp = stdin);

@@ -131,13 +131,13 @@ void remove(const char *const index, const std::string &homeDir, const std::stri
     fprintf(num_f, "%d", --lastN);
 }
 
-void swap(const char *const &from, const char *const &to, const char *const &homeDir,
+void swap(const short &from, const short &to, const char *const &homeDir,
           const char *const &notesPath, const char *const &numPath) {
     const std::string tmpPath = std::string(homeDir) + "/tmp.txt";
     FILE *tmp_f = fopen(tmpPath.c_str(), "w"), *notes_f = fopen(notesPath, "r"),
          *num_f = fopen(numPath, "r");
 
-    short int lastN, intTo = toInt(to), intFrom = toInt(from), linePtr = 0;
+    short int lastN, linePtr = 0;
     char *buff;
 
     check<bool>(!tmp_f, "Couldn't open temporary file!!");
@@ -146,16 +146,22 @@ void swap(const char *const &from, const char *const &to, const char *const &hom
                 "       You probably don't have any notes yet.\n"
                 "       Add a note  with the command mnoter add");
     check<bool>(!num_f, "Couldn't open num file!!");
-    check<bool>(!isNum(to), "Please enter a valid number for the destination!!");
-    check<bool>(!isNum(from), "Please specify a valid number for the source!!");
 
     fscanf(num_f, "%hu", &lastN);
-    check<bool>(intTo > lastN || intFrom > lastN,
-                std::string(std::string("There is no note with the number of ") + to).c_str());
-    if (intTo == intFrom)
+    if (to > lastN) {
+        printf("%s%sERROR:%s%s There is no note with the number %d%s", BOLD, RED, RESET, RED, to,
+               RESET);
+        exit(-1);
+    }
+    if (from > lastN) {
+        printf("%s%sERROR:%s%s There is no note with the number %d%s", BOLD, RED, RESET, RED, from,
+               RESET);
+        exit(-1);
+    }
+    if (to == from)
         return;
 
-    for (short i = 0; i < (intTo > intFrom ? intTo : intFrom); ++i)
+    for (short i = 0; i < (to > from ? to : from); ++i)
         delete[] getLine(notes_f);
     for (char i = 0; i != ' '; i = fgetc(notes_f))
         ;
@@ -163,10 +169,10 @@ void swap(const char *const &from, const char *const &to, const char *const &hom
 
     rewind(notes_f);
 
-    swapHelper(linePtr, (intTo > intFrom ? intFrom : intTo), notes_f, tmp_f, buff);
+    swapHelper(linePtr, (to > from ? from : to), notes_f, tmp_f, buff);
     buff = getLine(notes_f);
 
-    swapHelper(linePtr, (intTo > intFrom ? intTo : intFrom), notes_f, tmp_f, buff);
+    swapHelper(linePtr, (to > from ? to : from), notes_f, tmp_f, buff);
     delete[] getLine(notes_f);
 
     copyFileLines(notes_f, tmp_f, ++lastN - linePtr);
@@ -186,16 +192,16 @@ void error(const char *const str, const bool &shouldExit, const short &exitCode)
         exit(exitCode);
 }
 
-bool isNum(const char *const num) {
+bool isNum(const char *const str) {
     short i = 0;
 
-    for (; i < strLen(num); ++i)
-        if (!(num[i] >= 48 && num[i] <= 57)) {
-            i = strLen(num);
+    for (; i < strLen(str); ++i)
+        if (!(str[i] >= 48 && str[i] <= 57)) {
+            i = strLen(str) + 1;
             break;
         }
 
-    return i == strLen(num);
+    return i != (strLen(str) + 1);
 }
 
 short int strLen(const char *const &str) {
