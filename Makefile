@@ -45,7 +45,7 @@ all:
 
 run: all
 	$(call, printStatus,RUNNING, "${EXEC} with args ${ARGS}")
-	@time ${BINDIR}/${EXEC}/${EXEC} ${ARGS}
+	@${BINDIR}/${EXEC}/${EXEC} ${ARGS}
 
 clean:
 	@for i in ${TARGETS}; do\

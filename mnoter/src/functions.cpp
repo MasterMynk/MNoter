@@ -148,21 +148,14 @@ void swap(const short &from, const short &to, const char *const &homeDir,
     check<bool>(!num_f, "Couldn't open num file!!");
 
     fscanf(num_f, "%hu", &lastN);
-    if (to > lastN) {
-        printf("%s%sERROR:%s%s There is no note with the number %d%s", BOLD, RED, RESET, RED, to,
-               RESET);
-        exit(-1);
-    }
-    if (from > lastN) {
-        printf("%s%sERROR:%s%s There is no note with the number %d%s", BOLD, RED, RESET, RED, from,
-               RESET);
-        exit(-1);
-    }
+    if (to > lastN)
+        error("There is no note with the number ", to);
+    if (from > lastN)
+        error("There is no note with the number ", from);
 
     /******** Get the note which has the highest number first ********/
     // This for loop takes me at the start of the line to be copied
-    for (short i = 0; i < (to > from ? to : from); ++i)
-        delete[] getLine(notes_f);
+    skipLines(notes_f, to > from ? to : from);
     fseek(notes_f, 10, SEEK_CUR);   // This moves to the first number
     for (char i = fgetc(notes_f); i != ' '; i = fgetc(notes_f))
         ;
@@ -172,39 +165,17 @@ void swap(const short &from, const short &to, const char *const &homeDir,
 
     /* Now go to the note which has the lower number */
     /* And while doing so copy stuff around */
-    for (short i = 0; i < (to > from ? from : to); ++i) {
-        char *line = getLine(notes_f);
-
-        fprintf(tmp_f, "%s\n", line);
-
-        delete[] line;
-    }
-    for (char i = fgetc(notes_f); i != ' '; i = fgetc(notes_f))
-        fputc(i, tmp_f);
-    fprintf(tmp_f, " %s\n", buff);
-    delete[] buff;
+    copyFileLines(notes_f, tmp_f, to > from ? from : to);
+    copyColor(notes_f, tmp_f);
+    printDeleteBuff(tmp_f, buff);
     buff = getLine(notes_f);
 
-    for (short i = 1; i < (to > from ? to - from : from - to); ++i) {
-        char *line = getLine(notes_f);
-
-        fprintf(tmp_f, "%s\n", line);
-
-        delete[] line;
-    }
-    for (char i = fgetc(notes_f); i != ' '; i = fgetc(notes_f))
-        fputc(i, tmp_f);
-    fprintf(tmp_f, " %s\n", buff);
-    delete[] buff;
+    copyFileLines(notes_f, tmp_f, (to > from ? to - from : from - to) - 1);
+    copyColor(notes_f, tmp_f);
+    printDeleteBuff(tmp_f, buff);
     delete[] getLine(notes_f);
 
-    for (short i = 0; i < (to > from ? lastN - to : lastN - from); ++i) {
-        char *line = getLine(notes_f);
-
-        fprintf(tmp_f, "%s\n", line);
-
-        delete[] line;
-    }
+    copyFileLines(notes_f, tmp_f, to > from ? lastN - to : lastN - from);
 
     fclose(tmp_f);
     fclose(notes_f);
@@ -215,10 +186,14 @@ void swap(const short &from, const short &to, const char *const &homeDir,
     fclose(num_f);
 }
 
-void error(const char *const str, const bool &shouldExit, const short &exitCode) {
+void error(const char *const str) {
     printf("%s%sERROR: %s%s%s\n%s", RED, BOLD, RESET, RED, str, RESET);
-    if (shouldExit)
-        exit(exitCode);
+    exit(-1);
+}
+
+void error(const char *const str, const short &num) {
+    printf("%s%sERROR: %s%s%s%d\n%s", RED, BOLD, RESET, RED, str, num, RESET);
+    exit(-1);
 }
 
 bool isNum(const char *const str) {
@@ -286,8 +261,23 @@ void copyFileLines(FILE *&from, FILE *&to, const short &numLines) {
         char *line = getLine(from);
 
         fprintf(to, "%s\n", line);
-        printf("%s\n", line);
 
         delete[] line;
     }
+}
+
+void copyColor(FILE *&from, FILE *&to) {
+    for (char i = fgetc(from); i != ' '; i = fgetc(from))
+        fputc(i, to);
+}
+
+void printDeleteBuff(FILE *&file, char *&buff) {
+    fprintf(file, " %s\n", buff);
+    delete[] buff;
+}
+
+void skipLines(FILE *file, const short &lines) {
+    for (short i = 0; i < lines; ++i)
+        while(fgetc(file) != '\n')
+            ;
 }
