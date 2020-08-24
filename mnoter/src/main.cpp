@@ -20,7 +20,7 @@ int main(int argc, char *argv[]) {
 
     for (short i = 0; i < argc; ++i)
         if (argv[i][0] == '-')
-            if (argv[i][1] == 'h' || argv[i][2] == 'h'){
+            if (argv[i][1] == 'h' || argv[i][2] == 'h') {
                 help();
                 break;
             } else {
@@ -29,7 +29,7 @@ int main(int argc, char *argv[]) {
                 error(string(string("Unrecognized flag ") + argv[i]).c_str());
             }
         else if (argv[i][0] == 'a') {
-            add(argc - (i + 1), &argv[i + 1], notesPath.c_str(), numPath.c_str());
+            add(&argv[i + 1], argc - (i + 1), notesPath.c_str());
             break;
         } else if (argv[i][0] == 's') {
             if (argv[i][1] == 'h')

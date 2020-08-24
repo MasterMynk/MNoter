@@ -2,8 +2,7 @@
 
 #include <filesystem>
 
-void add(const int &argc, char **const &argv, const char *const &notesPath,
-         const char *const &numPath);
+void add(char **const &argv, const short &argc, const char *const &notesPath);
 void show(const char *const &notesPath);
 void remove(const char *const index, const std::string &homeDir, const std::string &notesPath,
             const char *const &numPath);

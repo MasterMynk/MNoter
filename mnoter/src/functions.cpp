@@ -8,43 +8,13 @@
 #define BOLD "\x1b[1m"
 #define RESET "\x1b[0m"
 
-void add(const int &argc, char **const &argv, const char *const &notesPath,
-         const char *const &numPath) {
-    bool todoFlag = true;
-    FILE *notes_f = fopen(notesPath, "r"), *num_f = nullptr;
-
-    // Just check if it exists
-    if (notes_f) {
-        fclose(notes_f);
-        todoFlag = false;
-    }
+void add(char **const &argv, const short &argc, const char *const &notesPath) {
+    FILE *notes_f = fopen(notesPath, "a");
 
     check<bool>(!(notes_f = fopen(notesPath, "a+")), "Couldn't open notes file");
 
-    if (todoFlag) {
-        check<bool>(!(num_f = fopen(numPath, "w")), "Couldn't open num file!!");
-
-        fputc('1', num_f);
-        fprintf(notes_f, "%s%sTODO:%s\n%s%s1. %s", BOLD, RED, RESET, BOLD, CYAN, WHITE);
-
-        fclose(num_f);
-    } else {
-        short numNotes = 0;
-
-        check<bool>(!(num_f = fopen(numPath, "r")), "Couldn't open num file for reading!!");
-
-        fscanf(num_f, "%hu", &numNotes);
-        fprintf(notes_f, "%s%s%d. %s", BOLD, CYAN, ++numNotes, WHITE);
-
-        check<bool>(!(num_f = freopen(numPath, "w", num_f)), "Couldn't open num file!!");
-        fprintf(num_f, "%d", numNotes);
-
-        fclose(num_f);
-    }
-
     for (short i = 0; i < argc; ++i)
         fprintf(notes_f, "%s ", argv[i]);
-    fprintf(notes_f, "%s\n", RESET);
 
     fclose(notes_f);
 }
