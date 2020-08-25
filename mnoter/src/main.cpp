@@ -16,7 +16,7 @@ int main(int argc, char *argv[]) {
 
     std::filesystem::create_directory(homeDir += "/.config/MNoter");
 
-    std::string notesPath = homeDir + "/notes.txt", numPath = homeDir + "/num.txt";
+    std::string notesPath = homeDir + "/notes.txt";
 
     for (short i = 0; i < argc; ++i)
         if (argv[i][0] == '-')

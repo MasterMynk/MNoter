@@ -10,19 +10,15 @@ void swap(const short &from, const short &to, const std::string &homeDir,
 void help();
 
 void error(const char *const str);
-void error(const char *const str, const short &num);
-
 bool isNum(const char *const str);
 int toInt(const char *const str);
 short int strLen(const char *const &str);
 char *getLine(FILE *const &fp = stdin);
-void copyFileLines(FILE *&from, FILE *&to, const short &numLines);
-
-void copyColor(FILE *&from, FILE *&to);
-void printDeleteBuff(FILE *&file, char *&buff);
+void copyLines(FILE *&from, FILE *&to, const short &numLines);
 void skipLines(FILE *file, const short &lines);
-
 short countNumLines(FILE *&file);
+
+void printDeleteBuff(FILE *&file, char *&buff);
 
 template <typename T>
 void check(const T &val, const char *const message) {

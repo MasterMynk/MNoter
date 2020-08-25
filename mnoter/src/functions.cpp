@@ -65,9 +65,9 @@ void remove(const short &note, const std::string &homeDir, const char *const &no
 
     check<bool>(note > lastN || note <= 0, "The note you wish to remove doesn't exist!!\n");
 
-    copyFileLines(notes_f, tmp_f, note - 1);       // Copy notes up to the note to remove
-    skipLines(notes_f, 1);                         // Skip the note to be removed
-    copyFileLines(notes_f, tmp_f, lastN - note);   // Copy the rest of the notes
+    copyLines(notes_f, tmp_f, note - 1);       // Copy notes up to the note to remove
+    skipLines(notes_f, 1);                     // Skip the note to be removed
+    copyLines(notes_f, tmp_f, lastN - note);   // Copy the rest of the notes
 
     // Closing these early to avoid complecations while deleteting it later
     fclose(tmp_f);
@@ -101,19 +101,19 @@ void swap(const short &from, const short &to, const std::string &homeDir,
 
     /*********************** Now go to the note which has the lower number ***********************/
     /****************** And while doing so copy stuff around ******************/
-    copyFileLines(notes_f, tmp_f, (to > from ? from : to) - 1);
+    copyLines(notes_f, tmp_f, (to > from ? from : to) - 1);
     printDeleteBuff(tmp_f, buff);   // Put the note copied earlier in its place
     buff = getLine(notes_f);        // And copy it into buffer
 
     /*************************** Copy the notes in between to and from ***************************/
-    copyFileLines(notes_f, tmp_f, (to > from ? to - from : from - to) - 1);
+    copyLines(notes_f, tmp_f, (to > from ? to - from : from - to) - 1);
 
     /*********** Put the note copied earlier in its place and skip the note afterwards ***********/
     printDeleteBuff(tmp_f, buff);
     skipLines(notes_f, 1);
 
     /********************************* Copy the rest of the notes *********************************/
-    copyFileLines(notes_f, tmp_f, to > from ? lastN - to : lastN - from);
+    copyLines(notes_f, tmp_f, to > from ? lastN - to : lastN - from);
 
     /**************** Close these because we are going to be modifying them later ****************/
     fclose(tmp_f);
@@ -127,11 +127,6 @@ void swap(const short &from, const short &to, const std::string &homeDir,
 
 void error(const char *const str) {
     printf("%s%sERROR: %s%s%s\n%s", RED, BOLD, RESET, RED, str, RESET);
-    exit(-1);
-}
-
-void error(const char *const str, const short &num) {
-    printf("%s%sERROR: %s%s%s%d\n%s", RED, BOLD, RESET, RED, str, num, RESET);
     exit(-1);
 }
 
@@ -195,7 +190,7 @@ char *getLine(FILE *const &fp) {
     return str;
 }
 
-void copyFileLines(FILE *&from, FILE *&to, const short &numLines) {
+void copyLines(FILE *&from, FILE *&to, const short &numLines) {
     for (short i = 0; i < numLines; ++i) {
         char *line = getLine(from);
 
@@ -203,11 +198,6 @@ void copyFileLines(FILE *&from, FILE *&to, const short &numLines) {
 
         delete[] line;
     }
-}
-
-void copyColor(FILE *&from, FILE *&to) {
-    for (char i = fgetc(from); i != ' '; i = fgetc(from))
-        fputc(i, to);
 }
 
 void printDeleteBuff(FILE *&file, char *&buff) {
