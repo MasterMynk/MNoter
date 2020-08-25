@@ -77,59 +77,52 @@ void remove(const short &note, const std::string &homeDir, const char *const &no
     rename(tmpPath.c_str(), notesPath);
 }
 
-void swap(const short &from, const short &to, const char *const &homeDir,
-          const char *const &notesPath, const char *const &numPath) {
-    const std::string tmpPath = std::string(homeDir) + "/tmp.txt";
-    FILE *tmp_f = fopen(tmpPath.c_str(), "w"), *notes_f = fopen(notesPath, "r"),
-         *num_f = fopen(numPath, "r");
-
-    short int lastN;
+void swap(const short &from, const short &to, const std::string &homeDir,
+          const char *const &notesPath) {
+    const std::string tmpPath = homeDir + "/tmp.txt";
+    FILE *tmp_f = fopen(tmpPath.c_str(), "w"), *notes_f = fopen(notesPath, "r");
     char *buff;
 
     check<bool>(!tmp_f, "Couldn't open temporary file!!");
     check<bool>(!notes_f,
                 "Couldn't open notes file!!\n"
                 "       You probably don't have any notes yet.\n"
-                "       Add a note  with the command mnoter add");
-    check<bool>(!num_f, "Couldn't open num file!!");
+                "       Add a note with the command mnoter add");
 
-    fscanf(num_f, "%hu", &lastN);
-    if (to > lastN)
-        error("There is no note with the number ", to);
-    if (from > lastN)
-        error("There is no note with the number ", from);
+    const short lastN = countNumLines(notes_f);
+    check<bool>(to > lastN || to <= 0 || from > lastN || from <= 0,
+                "The notes you wish to swap don't exist");
 
-    /******** Get the note which has the highest number first ********/
-    // This for loop takes me at the start of the line to be copied
-    skipLines(notes_f, to > from ? to : from);
-    fseek(notes_f, 10, SEEK_CUR);   // This moves to the first number
-    for (char i = fgetc(notes_f); i != ' '; i = fgetc(notes_f))
-        ;
+    /************************** Copy the note which is further down first *************************/
+    skipLines(notes_f, (to > from ? to : from) - 1);
     buff = getLine(notes_f);
 
-    rewind(notes_f);
+    rewind(notes_f);   // Go back to the top
 
-    /* Now go to the note which has the lower number */
-    /* And while doing so copy stuff around */
-    copyFileLines(notes_f, tmp_f, to > from ? from : to);
-    copyColor(notes_f, tmp_f);
-    printDeleteBuff(tmp_f, buff);
-    buff = getLine(notes_f);
+    /*********************** Now go to the note which has the lower number ***********************/
+    /****************** And while doing so copy stuff around ******************/
+    copyFileLines(notes_f, tmp_f, (to > from ? from : to) - 1);
+    printDeleteBuff(tmp_f, buff);   // Put the note copied earlier in its place
+    buff = getLine(notes_f);        // And copy it into buffer
 
+    /*************************** Copy the notes in between to and from ***************************/
     copyFileLines(notes_f, tmp_f, (to > from ? to - from : from - to) - 1);
-    copyColor(notes_f, tmp_f);
-    printDeleteBuff(tmp_f, buff);
-    delete[] getLine(notes_f);
 
+    /*********** Put the note copied earlier in its place and skip the note afterwards ***********/
+    printDeleteBuff(tmp_f, buff);
+    skipLines(notes_f, 1);
+
+    /********************************* Copy the rest of the notes *********************************/
     copyFileLines(notes_f, tmp_f, to > from ? lastN - to : lastN - from);
 
+    /**************** Close these because we are going to be modifying them later ****************/
     fclose(tmp_f);
     fclose(notes_f);
 
-    std::filesystem::remove(notesPath);
-    std::filesystem::rename(tmpPath, notesPath);
-
-    fclose(num_f);
+    /************ As the temporary file is now the better version of the actual notes. ************/
+    /************************ Make it the actual notes ************************/
+    remove(notesPath);
+    rename(tmpPath.c_str(), notesPath);
 }
 
 void error(const char *const str) {
@@ -189,13 +182,13 @@ char *getLine(FILE *const &fp) {
             memLen += COMMON_WORD_LEN;
         }
 
-        if ((str[stringLen] = fgetc(fp)) == '\n')
+        if ((str[stringLen] = fgetc(fp)) == '\n' || str[stringLen] == EOF)
             break;
 
         ++stringLen;
     }
 
-    str = (char *)realloc(str, stringLen * sizeof(char));
+    str = (char *)realloc(str, (stringLen + 1) * sizeof(char));
 
     str[stringLen] = '\0';
 
@@ -218,7 +211,7 @@ void copyColor(FILE *&from, FILE *&to) {
 }
 
 void printDeleteBuff(FILE *&file, char *&buff) {
-    fprintf(file, " %s\n", buff);
+    fprintf(file, "%s\n", buff);
     delete[] buff;
 }
 

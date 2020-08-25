@@ -60,7 +60,7 @@ int main(int argc, char *argv[]) {
                     arg1 = toInt(argv[i + 1]);
                     arg2 = toInt(argv[i + 2]);
                 }
-                swap(arg1, arg2, homeDir.c_str(), notesPath.c_str(), numPath.c_str());
+                swap(arg1, arg2, homeDir, notesPath.c_str());
             }
             break;
         } else if (argv[i][0] == 'r') {
