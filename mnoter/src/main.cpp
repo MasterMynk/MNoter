@@ -9,6 +9,7 @@
 int main(int argc, char *argv[]) {
     std::string homeDir = getenv("HOME");
     bool silentF = false;
+    char *editor = nullptr;
 
     std::filesystem::create_directory(homeDir += "/.config/MNoter");
 
@@ -22,7 +23,14 @@ int main(int argc, char *argv[]) {
                 break;
             } else if (argv[i][1] == 's' || argv[i][2] == 's')   // Silent Flag
                 silentF = true;
-            else {
+            else if (argv[i][1] == 'e' || argv[i][2] == 'e') {   // Editor flag
+                short j = 0;
+
+                for (; argv[i][j] != '='; ++j)
+                    ;
+                ++j;
+                editor = &argv[i][j];
+            } else {
                 using namespace std;
 
                 error(string(string("Unrecognized flag ") + argv[i]).c_str());
@@ -107,8 +115,23 @@ int main(int argc, char *argv[]) {
             move(from, to, homeDir, notesPath.c_str());
 
             break;
-        } else if (argv[i][0] == 'e')
-            edit(notesPath.c_str());
+        } else if (argv[i][0] == 'e') {
+            bool hasAllocated = false;
+
+            if (!editor)
+                editor = getenv("EDITOR");
+
+            if (!editor) {
+                printf("Please enter you editor of choice: ");
+                editor = getLine();
+                hasAllocated = true;
+            }
+
+            edit(notesPath.c_str(), editor);
+
+            if (hasAllocated)
+                delete[] editor;
+        }
 
     if (!silentF)
         show(notesPath.c_str());

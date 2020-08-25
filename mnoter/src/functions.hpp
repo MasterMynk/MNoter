@@ -10,7 +10,7 @@ void swap(const short &from, const short &to, const std::string &homeDir,
           const char *const &notesPath);
 void move(const short &from, const short &to, const std::string &homeDir,
           const char *const &notesPath);
-void edit(const char *const &notesPath);
+void edit(const char *const &notesPath, const char *const &editor);
 void help();
 
 void error(const char *const str);
