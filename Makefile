@@ -1,12 +1,12 @@
 EXEC:=mnoter
 TARGETS:=${EXEC} # Any additional library should be add before executable
 DEFS:=
-ARGS:=add Hello World
+ARGS:=show
 
 export SHELL:=/bin/bash
-DEBUGFLAG:=
+DEBUGFLAG:=-g
 CMAKEDEBUGFLAG:=--config Debug
-export CFLAGS:=-Wall -O3 -std=c++20 ${DEBUGFLAG} $(shell for i in ${DEFS}; do echo "-D$$i"; done)
+export CFLAGS:=-Wall -std=c++20 ${DEBUGFLAG} $(shell for i in ${DEFS}; do echo "-D$$i"; done)
 export OFLAG:=-o
 export RM:=rm -rf
 export AR:=ar rcs

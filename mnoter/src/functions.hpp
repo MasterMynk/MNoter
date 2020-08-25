@@ -23,6 +23,8 @@ void copyColor(FILE *&from, FILE *&to);
 void printDeleteBuff(FILE *&file, char *&buff);
 void skipLines(FILE *file, const short &lines);
 
+short countNumLines(FILE *&file);
+
 template <typename T>
 void check(const T &val, const char *const message) {
     if (val)

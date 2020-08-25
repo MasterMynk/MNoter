@@ -15,18 +15,24 @@ void add(char **const &argv, const short &argc, const char *const &notesPath) {
 
     for (short i = 0; i < argc; ++i)
         fprintf(notes_f, "%s ", argv[i]);
+    fputc('\n', notes_f);
 
     fclose(notes_f);
 }
 
 void show(const char *const &notesPath) {
-    char toPrint;
     FILE *notes_f = fopen(notesPath, "r");
+    short lines;
 
-    check(!notes_f, "Couldn't open notes file!!");
+    check(!notes_f, "Couldn't open notes file. You probably don't have any notes yet!");
+    lines = countNumLines(notes_f);
 
-    while ((toPrint = fgetc(notes_f)) != EOF)
-        printf("%c", toPrint);
+    for (short i = 1; i <= lines; ++i) {
+        char *line = getLine(notes_f);
+
+        printf("%s%d. %s%s\n", BOLD CYAN, i, WHITE, line);
+        delete[] line;
+    }
 }
 
 void help() {
@@ -252,4 +258,16 @@ void skipLines(FILE *file, const short &lines) {
     for (short i = 0; i < lines; ++i)
         while (fgetc(file) != '\n')
             ;
+}
+
+short countNumLines(FILE *&file) {
+    short lines = 0;
+
+    for (char i = fgetc(file); i != EOF; i = fgetc(file))
+        if (i == '\n')
+            ++lines;
+
+    rewind(file);
+
+    return lines;
 }
