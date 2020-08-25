@@ -8,6 +8,7 @@
 
 int main(int argc, char *argv[]) {
     std::string homeDir = getenv("HOME");
+    bool silentF = false;
 
     std::filesystem::create_directory(homeDir += "/.config/MNoter");
 
@@ -15,10 +16,12 @@ int main(int argc, char *argv[]) {
 
     for (short i = 0; i < argc; ++i)
         if (argv[i][0] == '-')
-            if (argv[i][1] == 'h' || argv[i][2] == 'h') {
+            if (argv[i][1] == 'h' || argv[i][2] == 'h') {   // Help Flag
                 help();
                 break;
-            } else {
+            } else if (argv[i][1] == 's' || argv[i][2] == 's')   // Silent Flag
+                silentF = true;
+            else {
                 using namespace std;
 
                 error(string(string("Unrecognized flag ") + argv[i]).c_str());
@@ -75,4 +78,7 @@ int main(int argc, char *argv[]) {
 
             break;
         }
+
+    if (!silentF)
+        show(notesPath.c_str());
 }
