@@ -18,6 +18,7 @@ int main(int argc, char *argv[]) {
         if (argv[i][0] == '-')
             if (argv[i][1] == 'h' || argv[i][2] == 'h') {   // Help Flag
                 help();
+                silentF = true;
                 break;
             } else if (argv[i][1] == 's' || argv[i][2] == 's')   // Silent Flag
                 silentF = true;
