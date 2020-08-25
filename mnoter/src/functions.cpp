@@ -260,8 +260,14 @@ void move(const short &from, const short &to, const std::string &homeDir,
         if (from == i) {
             skipLines(notes_f, 1);
             continue;
-        } else if (to == i)
-            fprintf(tmp_f, "%s\n", buff);
+        } else if (to == i) {
+            if (to == lastN) {
+                copyLines(notes_f, tmp_f, 1);
+                fprintf(tmp_f, "%s\n", buff);
+                continue;
+            } else
+                fprintf(tmp_f, "%s\n", buff);
+        }
 
         copyLines(notes_f, tmp_f, 1);
     }
