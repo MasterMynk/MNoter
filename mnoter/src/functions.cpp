@@ -60,7 +60,7 @@ void remove(const short notes[], const short &len, const std::string &homeDir,
     FILE *notes_f = fopen(notesPath, "r"), *tmp_f = fopen(tmpPath.c_str(), "w");
 
     check<bool>(!notes_f, "Couldn't open notes file!!");
-    check<bool>(!tmp_f, "Couldn't open a temporary file");
+    check<bool>(!tmp_f, "Couldn't open a temporary file!!");
 
     const short lastN = countNumLines(notes_f);
 
@@ -68,6 +68,7 @@ void remove(const short notes[], const short &len, const std::string &homeDir,
         check<bool>(notes[i] > lastN || notes[i] <= 0,
                     "The note you wish to remove doesn't exist!!\n");
 
+    /********************** Copy all of the notes except the ones to remove **********************/
     for (short i = 1; i <= lastN; ++i) {
         bool flag = false;
 
@@ -83,7 +84,7 @@ void remove(const short notes[], const short &len, const std::string &homeDir,
             copyLines(notes_f, tmp_f, 1);
     }
 
-    // Closing these early to avoid complecations while deleteting it later
+    /************ Closing these early to avoid complecations while deleteting it later ************/
     fclose(tmp_f);
     fclose(notes_f);
 
