@@ -53,7 +53,8 @@ void help() {
         WHITE, RESET);
 }
 
-void remove(const short &note, const std::string &homeDir, const char *const &notesPath) {
+void remove(const short notes[], const short &len, const std::string &homeDir,
+            const char *const &notesPath) {
     std::string tmpPath = homeDir + "/tmp.txt";
 
     FILE *notes_f = fopen(notesPath, "r"), *tmp_f = fopen(tmpPath.c_str(), "w");
@@ -63,11 +64,24 @@ void remove(const short &note, const std::string &homeDir, const char *const &no
 
     const short lastN = countNumLines(notes_f);
 
-    check<bool>(note > lastN || note <= 0, "The note you wish to remove doesn't exist!!\n");
+    for (short i = 0; i < len; ++i)
+        check<bool>(notes[i] > lastN || notes[i] <= 0,
+                    "The note you wish to remove doesn't exist!!\n");
 
-    copyLines(notes_f, tmp_f, note - 1);       // Copy notes up to the note to remove
-    skipLines(notes_f, 1);                     // Skip the note to be removed
-    copyLines(notes_f, tmp_f, lastN - note);   // Copy the rest of the notes
+    for (short i = 1; i <= lastN; ++i) {
+        bool flag = false;
+
+        for (short j = 0; j < len; ++j)
+            if (notes[j] == i) {
+                flag = true;
+                skipLines(notes_f, 1);
+
+                break;
+            }
+
+        if (!flag)
+            copyLines(notes_f, tmp_f, 1);
+    }
 
     // Closing these early to avoid complecations while deleteting it later
     fclose(tmp_f);

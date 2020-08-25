@@ -64,9 +64,14 @@ int main(int argc, char *argv[]) {
             }
             break;
         } else if (argv[i][0] == 'r') {
-            check<bool>(!isNum(argv[i + 1]), "Please enter a valid number!!");
+            short len = argc - (i + 1), notesToRem[len]{0};
 
-            remove(toInt(argv[i + 1]), homeDir, notesPath.c_str());
+            for (short j = 0; j < len; ++j) {
+                check<bool>(!isNum(argv[i + 1 + j]), "Please enter a valid number!!");
+                notesToRem[j] = toInt(argv[i + 1 + j]);
+            }
+
+            remove(notesToRem, len, homeDir, notesPath.c_str());
 
             break;
         }
