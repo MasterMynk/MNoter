@@ -307,3 +307,14 @@ void replaceTmpNotes(const char *const notesPath, const char *const tmpPath) {
     remove(notesPath);
     rename(tmpPath, notesPath);
 }
+
+void edit(const char *const &notesPath) {
+    char *editor = getenv("EDITOR");
+
+    if (!editor) {
+        printf("Please enter you editor of choice: ");
+        editor = getLine();
+    }
+
+    system((std::string(editor) + ' ' + notesPath).c_str());
+}

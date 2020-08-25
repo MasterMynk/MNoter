@@ -107,7 +107,8 @@ int main(int argc, char *argv[]) {
             move(from, to, homeDir, notesPath.c_str());
 
             break;
-        }
+        } else if (argv[i][0] == 'e')
+            edit(notesPath.c_str());
 
     if (!silentF)
         show(notesPath.c_str());
