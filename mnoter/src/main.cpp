@@ -30,9 +30,10 @@ int main(int argc, char *argv[]) {
             add(&argv[i + 1], argc - (i + 1), notesPath.c_str());
             break;
         } else if (argv[i][0] == 's') {
-            if (argv[i][1] == 'h')
+            if (argv[i][1] == 'h') {
                 show(notesPath.c_str());
-            else {
+                silentF = true;
+            } else {
                 using namespace std;
 
                 short arg1, arg2;
@@ -75,6 +76,10 @@ int main(int argc, char *argv[]) {
                 }
 
             remove(notesToRem, len, homeDir, notesPath.c_str());
+
+            break;
+        } else if (argv[i][0] == 'm') {
+            move(toInt(argv[i + 1]), toInt(argv[i + 2]), homeDir, notesPath.c_str());
 
             break;
         }

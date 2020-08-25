@@ -88,8 +88,7 @@ void remove(const short notes[], const short &len, const std::string &homeDir,
     fclose(tmp_f);
     fclose(notes_f);
 
-    remove(notesPath);
-    rename(tmpPath.c_str(), notesPath);
+    replaceTmpNotes(notesPath, tmpPath.c_str());
 }
 
 void swap(const short &from, const short &to, const std::string &homeDir,
@@ -134,10 +133,7 @@ void swap(const short &from, const short &to, const std::string &homeDir,
     fclose(tmp_f);
     fclose(notes_f);
 
-    /************ As the temporary file is now the better version of the actual notes. ************/
-    /************************ Make it the actual notes ************************/
-    remove(notesPath);
-    rename(tmpPath.c_str(), notesPath);
+    replaceTmpNotes(notesPath, tmpPath.c_str());
 }
 
 void error(const char *const str) {
@@ -236,4 +232,49 @@ short countNumLines(FILE *&file) {
     rewind(file);
 
     return lines;
+}
+
+void move(const short &from, const short &to, const std::string &homeDir,
+          const char *const &notesPath) {
+    std::string tmpPath = homeDir + "/tmp.txt";
+    FILE *notes_f = fopen(notesPath, "r"), *tmp_f = fopen(tmpPath.c_str(), "w");
+    char *buff;
+
+    if (from == to)   // Don't waste time because note from is already at note from
+        return;
+
+    check<bool>(!notes_f, "Couldn't open notes file!!");
+    check<bool>(!tmp_f, "Couldn't open a temporary file!!");
+
+    const short lastN = countNumLines(notes_f);
+    check<bool>(from > lastN || from <= 0 || to > lastN || to < 0, "Please enter a valid number!!");
+
+    /************************** First copy the note that has to be moved **************************/
+    skipLines(notes_f, from - 1);
+    buff = getLine(notes_f);
+
+    rewind(notes_f);
+
+    /******** Now cycle through the notes putting the copied note where is deserves to be ********/
+    for (short i = 1; i <= lastN; ++i) {
+        if (from == i) {
+            skipLines(notes_f, 1);
+            continue;
+        } else if (to == i)
+            fprintf(tmp_f, "%s\n", buff);
+
+        copyLines(notes_f, tmp_f, 1);
+    }
+
+    delete[] buff;
+
+    fclose(notes_f);
+    fclose(tmp_f);
+
+    replaceTmpNotes(notesPath, tmpPath.c_str());
+}
+
+void replaceTmpNotes(const char *const notesPath, const char *const tmpPath) {
+    remove(notesPath);
+    rename(tmpPath, notesPath);
 }

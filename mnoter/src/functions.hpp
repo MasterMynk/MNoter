@@ -8,6 +8,8 @@ void remove(const short notes[], const short &len, const std::string &homeDir,
             const char *const &notesPath);
 void swap(const short &from, const short &to, const std::string &homeDir,
           const char *const &notesPath);
+void move(const short &from, const short &to, const std::string &homeDir,
+          const char *const &notesPath);
 void help();
 
 void error(const char *const str);
@@ -20,6 +22,7 @@ void skipLines(FILE *file, const short &lines);
 short countNumLines(FILE *&file);
 
 void printDeleteBuff(FILE *&file, char *&buff);
+void replaceTmpNotes(const char *const notesPath, const char *const tmpPath);
 
 template <typename T>
 void check(const T &val, const char *const message) {
