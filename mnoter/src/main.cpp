@@ -64,12 +64,17 @@ int main(int argc, char *argv[]) {
             }
             break;
         } else if (argv[i][0] == 'r') {
-            short len = argc - (i + 1), notesToRem[len]{0};
+            short len = argc - (i + 1), notesToRem[!len ? 1 : len]{0};
 
-            for (short j = 0; j < len; ++j) {
-                check<bool>(!isNum(argv[i + 1 + j]), "Please enter a valid number!!");
-                notesToRem[j] = toInt(argv[i + 1 + j]);
-            }
+            if (!len) {
+                printf("Please enter a note that I should remove: ");
+                scanf("%hu", &notesToRem[0]);
+                len = 1;
+            } else
+                for (short j = 0; j < len; ++j) {
+                    check<bool>(!isNum(argv[i + 1 + j]), "Please enter a valid number!!");
+                    notesToRem[j] = toInt(argv[i + 1 + j]);
+                }
 
             remove(notesToRem, len, homeDir, notesPath.c_str());
 
