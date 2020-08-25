@@ -4,8 +4,7 @@
 
 void add(char **const &argv, const short &argc, const char *const &notesPath);
 void show(const char *const &notesPath);
-void remove(const char *const index, const std::string &homeDir, const std::string &notesPath,
-            const char *const &numPath);
+void remove(const short &note, const std::string &homeDir, const char *const &notesPath);
 void swap(const short &from, const short &to, const char *const &homeDir,
           const char *const &notesPath, const char *const &numPath);
 void help();

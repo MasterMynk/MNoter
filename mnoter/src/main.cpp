@@ -64,7 +64,10 @@ int main(int argc, char *argv[]) {
             }
             break;
         } else if (argv[i][0] == 'r') {
-            remove(argv[i + 1], homeDir, notesPath, numPath.c_str());
+            check<bool>(!isNum(argv[i + 1]), "Please enter a valid number!!");
+
+            remove(toInt(argv[i + 1]), homeDir, notesPath.c_str());
+
             break;
         }
 }

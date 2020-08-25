@@ -1,7 +1,7 @@
 EXEC:=mnoter
 TARGETS:=${EXEC} # Any additional library should be add before executable
 DEFS:=
-ARGS:=show
+ARGS:=remove 1
 
 export SHELL:=/bin/bash
 DEBUGFLAG:=-g

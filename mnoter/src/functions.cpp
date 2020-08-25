@@ -53,60 +53,28 @@ void help() {
         WHITE, RESET);
 }
 
-void remove(const char *const index, const std::string &homeDir, const std::string &notesPath,
-            const char *const &numPath) {
+void remove(const short &note, const std::string &homeDir, const char *const &notesPath) {
     std::string tmpPath = homeDir + "/tmp.txt";
 
-    FILE *notes_f = fopen(notesPath.c_str(), "a+"), *num_f = fopen(numPath, "r"),
-         *tmp_f = fopen(tmpPath.c_str(), "w");
-
-    short int lastN, intIndex = toInt(index);
+    FILE *notes_f = fopen(notesPath, "r"), *tmp_f = fopen(tmpPath.c_str(), "w");
 
     check<bool>(!notes_f, "Couldn't open notes file!!");
-    check<bool>(!num_f, "Couldn't open num file!!");
     check<bool>(!tmp_f, "Couldn't open a temporary file");
-    check<bool>(!isNum(index), "Please enter a valid number!!");
 
-    fscanf(num_f, "%hu", &lastN);
-    check<bool>(intIndex > lastN, "Please enter a index smaller than the number of notes!!");
+    const short lastN = countNumLines(notes_f);
 
-    for (short i = 0; i < intIndex; ++i) {
-        char *line = getLine(notes_f);
-        fprintf(tmp_f, "%s\n", line);
+    check<bool>(note > lastN || note <= 0, "The note you wish to remove doesn't exist!!\n");
 
-        delete[] line;
-    }
+    copyFileLines(notes_f, tmp_f, note - 1);       // Copy notes up to the note to remove
+    skipLines(notes_f, 1);                         // Skip the note to be removed
+    copyFileLines(notes_f, tmp_f, lastN - note);   // Copy the rest of the notes
 
-    delete[] getLine(notes_f);
-
-    for (short i = intIndex; i < lastN; ++i) {
-        char *line = getLine(notes_f);
-        short j = 0;
-
-        // Transfer the colors from notes.txt --> tmp.txt
-        for (; j < 9; ++j)
-            fputc(line[j], tmp_f);
-
-        // Now line[j] is probably at the number
-        // So ignore it and put a new number in its place
-        for (; line[j] != '.'; ++j)
-            ;
-        fprintf(tmp_f, "%d", i);
-
-        // Now transfer the entire notes here onwards
-        fprintf(tmp_f, "%s\n", &line[j]);
-
-        delete[] line;
-    }
-
-    fclose(tmp_f);   // Closing it early to avoid complecations while deleteting it later
+    // Closing these early to avoid complecations while deleteting it later
+    fclose(tmp_f);
     fclose(notes_f);
 
-    std::filesystem::remove(notesPath);
-    std::filesystem::rename(tmpPath, notesPath);
-
-    num_f = freopen(numPath, "w", num_f);
-    fprintf(num_f, "%d", --lastN);
+    remove(notesPath);
+    rename(tmpPath.c_str(), notesPath);
 }
 
 void swap(const short &from, const short &to, const char *const &homeDir,
