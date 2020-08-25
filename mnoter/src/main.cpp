@@ -4,11 +4,6 @@
  * Email: shigoankerMayank@gmail.com
  */
 
-/*
-TODO:
-Complete remove function
-Add a feature that takes tells the user to input something if they haven't
-*/
 #include "functions.hpp"
 
 int main(int argc, char *argv[]) {
