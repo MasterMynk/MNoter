@@ -14,7 +14,7 @@ int main(int argc, char *argv[]) {
 
     std::string notesPath = homeDir + "/notes.txt";
 
-    for (short i = 0; i < argc; ++i)
+    for (short i = 1; i < argc; ++i)
         if (argv[i][0] == '-')
             if (argv[i][1] == 'h' || argv[i][2] == 'h') {   // Help Flag
                 help();
