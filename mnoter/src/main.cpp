@@ -4,7 +4,10 @@
  * Email: shigoankerMayank@gmail.com
  */
 
+#include <filesystem>
+
 #include "functions.hpp"
+#include "operations.hpp"
 
 int main(int argc, char *argv[]) {
     std::string homeDir = getenv("HOME");

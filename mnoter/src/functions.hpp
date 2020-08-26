@@ -1,18 +1,16 @@
 #pragma once
 
-#include <filesystem>
+#include <string>
 
-void add(char **const &argv, const short &argc, const char *const &notesPath);
-void show(const char *const &notesPath);
-void remove(const short notes[], const short &len, const std::string &homeDir,
-            const char *const &notesPath);
-void swap(const short &from, const short &to, const std::string &homeDir,
-          const char *const &notesPath);
-void move(const short &from, const short &to, const std::string &homeDir,
-          const char *const &notesPath);
-void edit(const char *const &notesPath, const char *const &editor);
-void change(const short &note, char **const &toChangeWith, const short &len,
-            const std::string &homeDir, const char *const &notesPath);
+#define RED "\x1b[31m"
+#define GREEN "\x1b[32m"
+#define YELLOW "\x1b[33m"
+#define CYAN "\x1b[34m"
+#define PURPLE "\x1b[35m"
+#define WHITE "\x1b[37m"
+
+#define BOLD "\x1b[1m"
+#define RESET "\x1b[0m"
 
 void help();
 void printVersion();

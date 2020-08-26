@@ -46,6 +46,11 @@ ${MYOBJDIR}/%.o: ${SRCDIR}/%.cpp ${HEADERS}
 	$(beautify)
 	${CXX} $< -c ${CFLAGS} ${OFLAG} $@
 
+${MYOBJDIR}/functions.o: ${SRCDIR}/functions.cpp ${SRCDIR}/functions.hpp
+	$(call printStatus,COMPILING, $<)
+	$(beautify)
+	${CXX} $< -c ${CFLAGS} ${OFLAG} $@
+
 directoryStruct:
 	@if [ ! -d "${BUILDDIR}" ]; then mkdir -p ${BUILDDIR}; fi
 	@if [ ! -d "${OBJDIR}"   ]; then mkdir -p ${OBJDIR}; fi
