@@ -3,6 +3,8 @@
 #include <iostream>
 
 #define RED "\x1b[31m"
+#define GREEN "\x1b[32m"
+#define YELLOW "\x1b[33m"
 #define CYAN "\x1b[34m"
 #define PURPLE "\x1b[35m"
 #define WHITE "\x1b[37m"
@@ -38,31 +40,50 @@ void show(const char *const &notesPath) {
 }
 
 void help() {
-    /* ********************************************************************************/
-    std::cout << BOLD WHITE "MNoter is a small program that helps you manage your notes.\n"
-              << CYAN "mnoter <options> <operation>\n"
-              << PURPLE "options: " WHITE "The options available are " RED "-h" WHITE "," RED
-                        " --help" WHITE "," RED " -s" WHITE " and" RED " --silent" WHITE ".\n"
-              << PURPLE "         -h/--help:" WHITE " Prints out this message.\n"
-              << PURPLE "         -s/--silent:" WHITE
-                        " By default MNoter prints out your notes after operations\n"
-                        "                      such as" RED " add" WHITE "," RED " remove" WHITE
-                        "," RED " swap" WHITE " and" RED " move" WHITE
-                        ". This flag turns that\n"
-                        "                      feature off.\n"
+    std::cout << BOLD GREEN "MNoter " WHITE "is a small program that helps you manage your notes.\n"
+              << PURPLE "usage: " CYAN "mnoter <options> <operation>\n\n"
+              << PURPLE "options: " WHITE "The options available are " RED "-h" WHITE "/" RED
+                        "--help" WHITE "," RED " -s" WHITE "/" RED "--silent" WHITE ", " RED
+                        "-e" WHITE "/" RED "--editor" WHITE ".\n"
+              << PURPLE "         -h" WHITE "/" PURPLE "--help:" WHITE
+                        " Prints out this message.\n\n"
+              << PURPLE
+        "         -s" WHITE "/" PURPLE "--silent:" WHITE " By default " GREEN "MNoter " WHITE
+        "prints out your notes after operations\n"
+        "                      such as" RED " add" WHITE "," RED " remove" WHITE "," RED
+        " swap" WHITE " and" RED " move" WHITE
+        ". This flag turns that\n"
+        "                      feature off.\n\n"
+              << PURPLE "         -e" WHITE "/" PURPLE "--editor: " WHITE
+                        "This flag only has an effect when using the edit operation.\n"
+                        "                      It lets you provide the editor you would like to "
+                        "use with having being asked about it.\n"
+                        "                      variable in your system.\n"
+              << PURPLE "                      usage:" CYAN
+                        " -e/--editor=\"<editor of choice>\"\n\n"
               << PURPLE
         "operations: " WHITE "There are three operation this program can perform " RED "add" WHITE
-        ", " RED "show" WHITE ", " RED "remove" WHITE ",\n" RED "            swap" WHITE " and" RED
-        " move" WHITE ".\n"
+        ", " RED "show" WHITE ", " RED "remove" WHITE ",\n" RED "            swap" WHITE ", " RED
+        "move " WHITE "and " RED "edit" WHITE ".\n"
               << PURPLE "            add:" WHITE
-                        " Creates a new note with all the parameters specified afterwards.\n "
-              << PURPLE "           show:" WHITE " Prints out all the notes.\n"
+                        " Creates a new note with all the parameters specified afterwards.\n\n"
+              << PURPLE "            show:" WHITE " Prints out all the notes.\n\n"
               << PURPLE "            remove:" WHITE
-                        " Removes a notes at the numbers specified afterwards.\n"
+                        " Removes a notes at the numbers specified afterwards.\n\n"
               << PURPLE "            swap:" WHITE
-                        " Swaps a note with another based on the numbers specified.\n"
+                        " Swaps a note with another based on the numbers specified.\n\n"
               << PURPLE "            move:" WHITE
-                        " Moves the note specified to another number specified.\n"
+                        " Moves the note specified to another number specified.\n\n"
+              << PURPLE "            edit: " WHITE
+                        "This opens the file that stores the notes in a text editor so\n"
+                        "                  that you can edit it. Every line is a new note. If no "
+                        "editor\n"
+                        "                  is supplied with the " RED "-e/--editor " WHITE
+                        "flags " GREEN "MNoter " WHITE
+                        "will first check\n"
+                        "                  the " YELLOW "EDITOR " WHITE
+                        "variable and if an editor is still not found then it\n"
+                        "                  will ask for the editor.\n"
               << RESET;
 }
 
@@ -81,8 +102,7 @@ void remove(const short notes[], const short &len, const std::string &homeDir,
         check<bool>(notes[i] > lastN || notes[i] <= 0,
                     "The note you wish to remove doesn't exist!!\n");
 
-    /********************** Copy all of the notes except the ones to remove
-     * **********************/
+    /********************** Copy all of the notes except the ones to remove ***********************/
     for (short i = 1; i <= lastN; ++i) {
         bool flag = false;
 
@@ -98,8 +118,7 @@ void remove(const short notes[], const short &len, const std::string &homeDir,
             copyLines(notes_f, tmp_f, 1);
     }
 
-    /************ Closing these early to avoid complecations while deleteting it later
-     * ************/
+    /*********** Closing these early to avoid complecations while deleteting it later ************/
     fclose(tmp_f);
     fclose(notes_f);
 
@@ -122,35 +141,29 @@ void swap(const short &from, const short &to, const std::string &homeDir,
     check<bool>(to > lastN || to <= 0 || from > lastN || from <= 0,
                 "The notes you wish to swap don't exist");
 
-    /************************** Copy the note which is further down first
-     * *************************/
+    /************************* Copy the note which is further down first *************************/
     skipLines(notes_f, (to > from ? to : from) - 1);
     buff = getLine(notes_f);
 
     rewind(notes_f);   // Go back to the top
 
-    /*********************** Now go to the note which has the lower number
-     * ***********************/
+    /*********************** Now go to the note which has the lower number ************************/
     /****************** And while doing so copy stuff around ******************/
     copyLines(notes_f, tmp_f, (to > from ? from : to) - 1);
     printDeleteBuff(tmp_f, buff);   // Put the note copied earlier in its place
     buff = getLine(notes_f);        // And copy it into buffer
 
-    /*************************** Copy the notes in between to and from
-     * ***************************/
+    /*************************** Copy the notes in between to and from ****************************/
     copyLines(notes_f, tmp_f, (to > from ? to - from : from - to) - 1);
 
-    /*********** Put the note copied earlier in its place and skip the note afterwards
-     * ***********/
+    /*********** Put the note copied earlier in its place and skip the note afterwards ************/
     printDeleteBuff(tmp_f, buff);
     skipLines(notes_f, 1);
 
-    /********************************* Copy the rest of the notes
-     * *********************************/
+    /******************************** Copy the rest of the notes *********************************/
     copyLines(notes_f, tmp_f, to > from ? lastN - to : lastN - from);
 
-    /**************** Close these because we are going to be modifying them later
-     * ****************/
+    /**************** Close these because we are going to be modifying them later *****************/
     fclose(tmp_f);
     fclose(notes_f);
 
@@ -270,15 +283,13 @@ void move(const short &from, const short &to, const std::string &homeDir,
     const short lastN = countNumLines(notes_f);
     check<bool>(from > lastN || from <= 0 || to > lastN || to < 0, "Please enter a valid number!!");
 
-    /************************** First copy the note that has to be moved
-     * **************************/
+    /************************* First copy the note that has to be moved **************************/
     skipLines(notes_f, from - 1);
     buff = getLine(notes_f);
 
     rewind(notes_f);
 
-    /******** Now cycle through the notes putting the copied note where is deserves to be
-     * ********/
+    /******** Now cycle through the notes putting the copied note where is deserves to be *********/
     for (short i = 1; i <= lastN; ++i) {
         if (from == i) {
             skipLines(notes_f, 1);
