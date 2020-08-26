@@ -44,7 +44,8 @@ void help() {
               << PURPLE "usage" WHITE ": " CYAN "mnoter <options> <operation>\n\n"
               << PURPLE "options" WHITE ": The options available are " RED "-h" WHITE "/" RED
                         "--help" WHITE "," RED " -s" WHITE "/" RED "--silent" WHITE ", " RED
-                        "-e" WHITE "/" RED "--editor" WHITE ".\n"
+                        "-e" WHITE "/" RED "--editor " WHITE "and " RED "-v" WHITE "/" RED
+                        "--version" WHITE ".\n"
               << PURPLE "         -h" WHITE "/" PURPLE "--help" WHITE
                         ": Prints out this message.\n\n"
               << PURPLE
@@ -61,6 +62,8 @@ void help() {
                         "                      having being asked about it.\n"
               << PURPLE "                      usage" WHITE ":" CYAN
                         " -e/--editor=\"<editor of choice>\"\n\n"
+              << PURPLE "         -v" WHITE "/" PURPLE "--version" WHITE
+                        ": Prints out the version of " GREEN "MNoter " WHITE "and exits.\n\n"
               << PURPLE
         "operations" WHITE ": There are three operation this program can perform " RED "add" WHITE
         ", " RED "show" WHITE ", " RED "remove" WHITE ",\n" RED "            swap" WHITE ", " RED
@@ -350,3 +353,5 @@ void change(const short &note, char **const &toChangeWith, const short &len,
 
     replaceTmpNotes(notesPath, tmpPath.c_str());
 }
+
+void printVersion() { std::cout << BOLD GREEN "MNoter " WHITE "version: " RED << VERSION << RESET; }

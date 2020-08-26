@@ -30,6 +30,11 @@ int main(int argc, char *argv[]) {
                     ;
                 ++j;
                 editor = &argv[i][j];
+
+            } else if (argv[i][1] == 'v' || argv[i][2] == 'v') {
+                printVersion();
+                silentF = true;
+                break;
             } else
                 error((std::string("Unrecognized flag ") + argv[i]).c_str());
         else if (argv[i][0] == 'a') {
