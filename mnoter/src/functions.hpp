@@ -13,7 +13,9 @@ void move(const short &from, const short &to, const std::string &homeDir,
 void edit(const char *const &notesPath, const char *const &editor);
 void change(const short &note, char **const &toChangeWith, const short &len,
             const std::string &homeDir, const char *const &notesPath);
+
 void help();
+void printVersion();
 
 void error(const char *const str);
 bool isNum(const char *const str);

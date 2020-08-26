@@ -350,3 +350,5 @@ void change(const short &note, char **const &toChangeWith, const short &len,
 
     replaceTmpNotes(notesPath, tmpPath.c_str());
 }
+
+void printVersion() { std::cout << BOLD GREEN "MNoter " WHITE "version: " RED << VERSION << RESET; }
