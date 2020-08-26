@@ -124,6 +124,13 @@ int main(int argc, char *argv[]) {
 
             if (hasAllocated)
                 delete[] editor;
+        } else if (argv[i][0] == 'c') {
+            check<bool>(!isNum(argv[i + 1]), "Please enter a number!!");
+
+            const short noteToChange = toInt(argv[i + 1]);
+
+            change(noteToChange, &argv[i + 2], argc - (i + 2), homeDir, notesPath.c_str());
+            break;
         }
 
     if (!silentF)
