@@ -134,8 +134,9 @@ int main(int argc, char *argv[]) {
 
                 printf("Now please enter the text I should put in place of note %d: ",
                        noteToChange);
-                // Skip the newline character which remains after the use enters the note to change
-                getchar();
+
+                getchar();   // Skip the newline character which remains after the user enters the
+                             // number of the note to change
 
                 text = getLine();
                 len = 1;
