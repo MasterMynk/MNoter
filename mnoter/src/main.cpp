@@ -30,11 +30,8 @@ int main(int argc, char *argv[]) {
                     ;
                 ++j;
                 editor = &argv[i][j];
-            } else {
-                using namespace std;
-
-                error(string(string("Unrecognized flag ") + argv[i]).c_str());
-            }
+            } else
+                error((std::string("Unrecognized flag ") + argv[i]).c_str());
         else if (argv[i][0] == 'a') {
             add(&argv[i + 1], argc - (i + 1), notesPath.c_str());
             break;
@@ -43,8 +40,6 @@ int main(int argc, char *argv[]) {
                 show(notesPath.c_str());
                 silentF = true;
             } else {
-                using namespace std;
-
                 short arg1, arg2;
                 if (i == (argc - 1)) {   // That means no other arguments were given
                     printf("Please tell me which two notes to swap (seperated by a space): ");
@@ -52,7 +47,7 @@ int main(int argc, char *argv[]) {
                 } else if (i == (argc - 2)) {   // That means only one argument was given
                     check<bool>(
                         !isNum(argv[i + 1]),
-                        string(string(argv[i + 1]) + " is not a number you cowhead!!").c_str());
+                        (std::string(argv[i + 1]) + " is not a number you cowhead!!").c_str());
 
                     arg1 = toInt(argv[i + 1]);
                     printf("Please tell me which note should I swap with %d: ", arg1);
@@ -60,10 +55,10 @@ int main(int argc, char *argv[]) {
                 } else {
                     check<bool>(
                         !isNum(argv[i + 1]),
-                        string(string(argv[i + 1]) + " is not a number you cowhead!!").c_str());
+                        (std::string(argv[i + 1]) + " is not a number you cowhead!!").c_str());
                     check<bool>(
                         !isNum(argv[i + 2]),
-                        string(string(argv[i + 2]) + " is not a number you cowhead!!").c_str());
+                        (std::string(argv[i + 2]) + " is not a number you cowhead!!").c_str());
 
                     arg1 = toInt(argv[i + 1]);
                     arg2 = toInt(argv[i + 2]);
@@ -88,8 +83,6 @@ int main(int argc, char *argv[]) {
 
             break;
         } else if (argv[i][0] == 'm') {
-            using namespace std;
-
             short from, to;
 
             if (i == (argc - 1)) {   // That means no other arguments were given
@@ -97,16 +90,16 @@ int main(int argc, char *argv[]) {
                 scanf("%hu %hu", &from, &to);
             } else if (i == (argc - 2)) {   // That means only one argument was given
                 check<bool>(!isNum(argv[i + 1]),
-                            string(string(argv[i + 1]) + " is not a number you cowhead!!").c_str());
+                            (std::string(argv[i + 1]) + " is not a number you cowhead!!").c_str());
 
                 from = toInt(argv[i + 1]);
                 printf("Please tell me where should I move note %d: ", from);
                 scanf("%hu", &to);
             } else {
                 check<bool>(!isNum(argv[i + 1]),
-                            string(string(argv[i + 1]) + " is not a number you cowhead!!").c_str());
+                            (std::string(argv[i + 1]) + " is not a number you cowhead!!").c_str());
                 check<bool>(!isNum(argv[i + 2]),
-                            string(string(argv[i + 2]) + " is not a number you cowhead!!").c_str());
+                            (std::string(argv[i + 2]) + " is not a number you cowhead!!").c_str());
 
                 from = toInt(argv[i + 1]);
                 to = toInt(argv[i + 2]);
