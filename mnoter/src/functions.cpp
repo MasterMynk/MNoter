@@ -58,7 +58,6 @@ void help() {
                         "This flag only has an effect when using the edit operation.\n"
                         "                      It lets you provide the editor you would like to "
                         "use with having being asked about it.\n"
-                        "                      variable in your system.\n"
               << PURPLE "                      usage:" CYAN
                         " -e/--editor=\"<editor of choice>\"\n\n"
               << PURPLE
