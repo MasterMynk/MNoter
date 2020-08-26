@@ -125,11 +125,35 @@ int main(int argc, char *argv[]) {
             if (hasAllocated)
                 delete[] editor;
         } else if (argv[i][0] == 'c') {
-            check<bool>(!isNum(argv[i + 1]), "Please enter a number!!");
+            short noteToChange, len;
+            char *text;
 
-            const short noteToChange = toInt(argv[i + 1]);
+            if (i == (argc - 1)) {   // No other arguments were supplied
+                printf("Please enter the number of the note to change: ");
+                scanf("%hu", &noteToChange);
 
-            change(noteToChange, &argv[i + 2], argc - (i + 2), homeDir, notesPath.c_str());
+                printf("Now please enter the text I should put in place of note %d: ",
+                       noteToChange);
+                // Skip the newline character which remains after the use enters the note to change
+                getchar();
+
+                text = getLine();
+                len = 1;
+            } else if (i == (argc - 2)) {   // Only one arg was supplied
+                check<bool>(!isNum(argv[i + 1]), "Please enter a valid number!!");
+                noteToChange = toInt(argv[i + 1]);
+
+                printf("Please enter the text I should put in place of note %d: ", noteToChange);
+                text = getLine();
+                len = 1;
+            } else {   // Everything was given
+                check<bool>(!isNum(argv[i + 1]), "Please enter a valid number!!");
+                noteToChange = toInt(argv[i + 1]);
+                len = argc - (i + 2);
+            }
+
+            change(noteToChange, &((i == (argc - 1) || i == (argc - 2)) ? text : argv[i + 2]), len,
+                   homeDir, notesPath.c_str());
             break;
         }
 
