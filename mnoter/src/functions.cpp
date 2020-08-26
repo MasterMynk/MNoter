@@ -41,48 +41,53 @@ void show(const char *const &notesPath) {
 
 void help() {
     std::cout << BOLD GREEN "MNoter " WHITE "is a small program that helps you manage your notes.\n"
-              << PURPLE "usage: " CYAN "mnoter <options> <operation>\n\n"
-              << PURPLE "options: " WHITE "The options available are " RED "-h" WHITE "/" RED
+              << PURPLE "usage" WHITE ": " CYAN "mnoter <options> <operation>\n\n"
+              << PURPLE "options" WHITE ": The options available are " RED "-h" WHITE "/" RED
                         "--help" WHITE "," RED " -s" WHITE "/" RED "--silent" WHITE ", " RED
                         "-e" WHITE "/" RED "--editor" WHITE ".\n"
-              << PURPLE "         -h" WHITE "/" PURPLE "--help:" WHITE
-                        " Prints out this message.\n\n"
+              << PURPLE "         -h" WHITE "/" PURPLE "--help" WHITE
+                        ": Prints out this message.\n\n"
               << PURPLE
-        "         -s" WHITE "/" PURPLE "--silent:" WHITE " By default " GREEN "MNoter " WHITE
+        "         -s" WHITE "/" PURPLE "--silent" WHITE ": By default " GREEN "MNoter " WHITE
         "prints out your notes after operations\n"
         "                      such as" RED " add" WHITE "," RED " remove" WHITE "," RED
         " swap" WHITE " and" RED " move" WHITE
         ". This flag turns that\n"
         "                      feature off.\n\n"
-              << PURPLE "         -e" WHITE "/" PURPLE "--editor: " WHITE
-                        "This flag only has an effect when using the edit operation.\n"
+              << PURPLE "         -e" WHITE "/" PURPLE "--editor" WHITE
+                        ": This flag only has an effect when using the edit operation.\n"
                         "                      It lets you provide the editor you would like to "
-                        "use with having being asked about it.\n"
-              << PURPLE "                      usage:" CYAN
+                        "use with\n"
+                        "                      having being asked about it.\n"
+              << PURPLE "                      usage" WHITE ":" CYAN
                         " -e/--editor=\"<editor of choice>\"\n\n"
               << PURPLE
-        "operations: " WHITE "There are three operation this program can perform " RED "add" WHITE
+        "operations" WHITE ": There are three operation this program can perform " RED "add" WHITE
         ", " RED "show" WHITE ", " RED "remove" WHITE ",\n" RED "            swap" WHITE ", " RED
-        "move " WHITE "and " RED "edit" WHITE ".\n"
-              << PURPLE "            add:" WHITE
-                        " Creates a new note with all the parameters specified afterwards.\n\n"
-              << PURPLE "            show:" WHITE " Prints out all the notes.\n\n"
-              << PURPLE "            remove:" WHITE
-                        " Removes a notes at the numbers specified afterwards.\n\n"
-              << PURPLE "            swap:" WHITE
-                        " Swaps a note with another based on the numbers specified.\n\n"
-              << PURPLE "            move:" WHITE
-                        " Moves the note specified to another number specified.\n\n"
-              << PURPLE "            edit: " WHITE
-                        "This opens the file that stores the notes in a text editor so\n"
+        "move " WHITE ", " RED "edit " WHITE "and " RED "change" WHITE ".\n\n"
+              << PURPLE "            add" WHITE
+                        ": Creates a new note with all the parameters given afterwards.\n\n"
+              << PURPLE "            show" WHITE ": Prints out all the notes.\n\n"
+              << PURPLE "            remove" WHITE
+                        ": Removes a notes at the numbers given afterwards.\n\n"
+              << PURPLE "            swap" WHITE
+                        ": Swaps a note with another based on the numbers given.\n\n"
+              << PURPLE "            move" WHITE
+                        ": Moves the note at the number given first to another number\n"
+                        "                  given afterwards.\n\n"
+              << PURPLE "            edit" WHITE
+                        ": This opens the file that stores the notes in a text editor so\n"
                         "                  that you can edit it. Every line is a new note. If no "
                         "editor\n"
-                        "                  is supplied with the " RED "-e/--editor " WHITE
-                        "flags " GREEN "MNoter " WHITE
+                        "                  is supplied with the " RED "-e" WHITE "/" RED
+                        "--editor " WHITE "flags, " GREEN "MNoter " WHITE
                         "will first check\n"
                         "                  the " YELLOW "EDITOR " WHITE
-                        "variable and if an editor is still not found then it\n"
-                        "                  will ask for the editor.\n"
+                        "variable and if an editor is still not found then\n"
+                        "                  it will ask for the editor.\n\n"
+              << PURPLE "            change" WHITE
+                        ": Accepts a number which will be the note to change and replaces\n"
+                        "                    it will all the arguments specified later.\n"
               << RESET;
 }
 
@@ -320,4 +325,28 @@ void replaceTmpNotes(const char *const notesPath, const char *const tmpPath) {
 
 void edit(const char *const &notesPath, const char *const &editor) {
     system((std::string(editor) + ' ' + notesPath).c_str());
+}
+
+void change(const short &note, char **const &toChangeWith, const short &len,
+            const std::string &homeDir, const char *const &notesPath) {
+    std::string tmpPath = homeDir + "/tmp.txt";
+    FILE *notes_f = fopen(notesPath, "r"), *tmp_f = fopen(tmpPath.c_str(), "w");
+
+    check<bool>(!notes_f, "Couldn't open notes file. You probably don't have any notes yet.");
+    check<bool>(!tmp_f, "Couldn't open a temporary file!!");
+
+    const short lastN = countNumLines(notes_f);
+    check<bool>(note > lastN || note <= 0, "The note you want to change doesn't exist!!");
+
+    copyLines(notes_f, tmp_f, note - 1);   // Copy all the notes before the note to change
+    skipLines(notes_f, 1);                 // Skip the like to be changed
+    for (short i = 0; i < len; ++i)        // Put the new line in its place
+        fprintf(tmp_f, "%s ", toChangeWith[i]);
+    fputc('\n', tmp_f);
+    copyLines(notes_f, tmp_f, lastN - note);
+
+    fclose(notes_f);
+    fclose(tmp_f);
+
+    replaceTmpNotes(notesPath, tmpPath.c_str());
 }
