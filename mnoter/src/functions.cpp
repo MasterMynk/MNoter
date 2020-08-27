@@ -7,8 +7,8 @@ void help() {
               << PURPLE "usage" WHITE ": " CYAN "mnoter <options> <operation>\n\n"
               << PURPLE "options" WHITE ": The options available are " RED "-h" WHITE "/" RED
                         "--help" WHITE "," RED " -s" WHITE "/" RED "--silent" WHITE ", " RED
-                        "-e" WHITE "/" RED "--editor " WHITE "and " RED "-v" WHITE "/" RED
-                        "--version" WHITE ".\n"
+                        "-e" WHITE "/" RED "--editor" WHITE ", " RED "-v" WHITE "/" RED
+                        "--version " WHITE "and " RED "-n" WHITE "/" RED "--no-ask" WHITE ".\n"
               << PURPLE "         -h" WHITE "/" PURPLE "--help" WHITE
                         ": Prints out this message.\n\n"
               << PURPLE
@@ -28,9 +28,14 @@ void help() {
               << PURPLE "         -v" WHITE "/" PURPLE "--version" WHITE
                         ": Prints out the version of " GREEN "MNoter " WHITE "and exits.\n\n"
               << PURPLE
+        "         -n" WHITE "/" PURPLE "--no-ask" WHITE
+        ": This flag only has an effect when used with the " RED "clear\n" WHITE
+        "                      operation. It only disables the confirmation prompt.\n\n"
+              << PURPLE
         "operations" WHITE ": There are three operation this program can perform " RED "add" WHITE
         ", " RED "show" WHITE ", " RED "remove" WHITE ",\n" RED "            swap" WHITE ", " RED
-        "move " WHITE ", " RED "edit " WHITE "and " RED "change" WHITE ".\n\n"
+        "move " WHITE ", " RED "edit" WHITE ", " RED "change " WHITE "and " RED "clear" WHITE
+        ".\n\n"
               << PURPLE "            add" WHITE
                         ": Creates a new note with all the parameters given afterwards.\n\n"
               << PURPLE "            show" WHITE ": Prints out all the notes.\n\n"
@@ -53,7 +58,11 @@ void help() {
                         "                  it will ask for the editor.\n\n"
               << PURPLE "            change" WHITE
                         ": Accepts a number which will be the note to change and replaces\n"
-                        "                    it will all the arguments specified later.\n"
+                        "                    it will all the arguments specified later.\n\n"
+              << PURPLE "            clear" WHITE
+                        ": Deletes all your notes. It always asks before deleting your\n"
+                        "                   notes but this can be disabled using the " RED
+                        "-n" WHITE "/" RED "--no-ask" WHITE " flag."
               << RESET;
 }
 
