@@ -4,8 +4,6 @@
  * Email: shigoankerMayank@gmail.com
  */
 
-#include <filesystem>
-
 #include "flags.hpp"
 #include "functions.hpp"
 #include "operations.hpp"
@@ -188,6 +186,8 @@ int main(int argc, char *argv[]) {
 
                 break;
             }
+        } else if (argv[i][0] == 'b') {
+            backup(argv[i + 1], notesPath.c_str());
         }
 
     if (!(flags & SILENT_BIT))     // If the silent bit is not set
