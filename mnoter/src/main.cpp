@@ -167,7 +167,16 @@ int main(int argc, char *argv[]) {
                        len, homeDir, notesPath.c_str());
                 break;
             } else {   // Clear operation
-                clear(notesPath.c_str());
+                char inp;
+                printf("Are you sure you want to delete all your notes [y/n]: ");
+                scanf("%c", &inp);
+
+                if (inp == 'y')
+                    clear(notesPath.c_str());
+                else
+                    printf("Input was '%c'. Exiting without deleting notes.\n", inp);
+
+                break;
             }
         }
 
