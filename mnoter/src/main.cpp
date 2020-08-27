@@ -6,6 +6,7 @@
 
 #include <filesystem>
 
+#include "flags.hpp"
 #include "functions.hpp"
 #include "operations.hpp"
 
@@ -38,7 +39,7 @@ int main(int argc, char *argv[]) {
                 editor = &argv[i][j];
 
             } else if (argv[i][1] == 'v' || argv[i][2] == 'v') {
-                printVersion();
+                version();
                 flags |= SILENT_BIT;
                 break;
             } else if (argv[i][1] == 'n' || argv[i][2] == 'n')   // No ask flag

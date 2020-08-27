@@ -33,7 +33,7 @@ all: directoryStruct ${BINPATH}
 	$(beautify)
 
 ${BINPATH}: ${OBJS}
-	$(call printStatus,LINKING, ${OBJS})
+	$(call printStatus,LINKING, $(^F))
 	$(beautify)
 	if [ ${TYPE} = "EXE" ]; then\
 		${CXX} ${OBJS} ${CFLAGS} ${OFLAG} $@;\
@@ -41,12 +41,26 @@ ${BINPATH}: ${OBJS}
 		${AR} $@ ${OBJS};\
 	fi
 
+# Any cpp file I forgot about or if it depend on every header file eg: main.cpp
 ${MYOBJDIR}/%.o: ${SRCDIR}/%.cpp ${HEADERS}
 	$(call printStatus,COMPILING, $<)
 	$(beautify)
 	${CXX} $< -c ${CFLAGS} ${OFLAG} $@
 
+# functions.cpp only depends on functions.hpp
 ${MYOBJDIR}/functions.o: ${SRCDIR}/functions.cpp ${SRCDIR}/functions.hpp
+	$(call printStatus,COMPILING, $<)
+	$(beautify)
+	${CXX} $< -c ${CFLAGS} ${OFLAG} $@
+
+# operations.cpp only depends on operations.hpp and functions.hpp
+${MYOBJDIR}/operations.o: ${SRCDIR}/operations.cpp ${SRCDIR}/operations.hpp ${SRCDIR}/functions.hpp
+	$(call printStatus,COMPILING, $<)
+	$(beautify)
+	${CXX} $< -c ${CFLAGS} ${OFLAG} $@
+
+# flags.cpp only depends on flags.hpp and functions.hpp
+${MYOBJDIR}/flags.o: ${SRCDIR}/flags.cpp ${SRCDIR}/flags.hpp ${SRCDIR}/functions.hpp
 	$(call printStatus,COMPILING, $<)
 	$(beautify)
 	${CXX} $< -c ${CFLAGS} ${OFLAG} $@

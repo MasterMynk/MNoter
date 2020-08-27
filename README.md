@@ -1,9 +1,9 @@
 # MNoter
 A small program that helps you manage your notes.
 ## usage:
-*mnoter \<options> \<operation>*
-### options:
-The options available are `-h`/`--help`, `-s`/`--silent`, `-e`/`--editor`, `-v`/`--version` and `-n`/`--no-ask`.
+*mnoter \<flags> \<operation>*
+### flags:
+The flags available are `-h`/`--help`, `-s`/`--silent`, `-e`/`--editor`, `-v`/`--version` and `-n`/`--no-ask`.
 
 * **-h**/**--help**: Prints out this message.
 

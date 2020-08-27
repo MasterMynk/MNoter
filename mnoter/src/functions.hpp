@@ -12,9 +12,6 @@
 #define BOLD "\x1b[1m"
 #define RESET "\x1b[0m"
 
-void help();
-void printVersion();
-
 void error(const char *const str);
 bool isNum(const char *const str);
 int toInt(const char *const str);
