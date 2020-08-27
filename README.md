@@ -3,8 +3,6 @@ A small program that helps you manage your notes.
 ## usage:
 *mnoter \<flags> \<operation>*
 ### flags:
-The flags available are `-h`/`--help`, `-s`/`--silent`, `-e`/`--editor`, `-v`/`--version` and `-n`/`--no-ask`.
-
 * **-h**/**--help**: Prints out this message.
 
 * **-s**/**--silent**: By default MNoter prints out your notes after operations such as `add`, `remove`, `swap` and `move`. This flag turns that feature off.
@@ -17,8 +15,6 @@ The flags available are `-h`/`--help`, `-s`/`--silent`, `-e`/`--editor`, `-v`/`-
 * **-n**/**--no-ask**: This flag only has an effect when used with the `clear` operation. It only disables the confirmation prompt.
 
 ### operations:
-There are three operation this program can perform `add`, `show`, `remove`, `swap`, `move`, `edit` and `clear`.
-
 * **add**: Creates a new note with all the parameters given afterwards.
 
 * **show**: Prints out all the notes.
@@ -34,3 +30,5 @@ There are three operation this program can perform `add`, `show`, `remove`, `swa
 * **change**: Accepts a number which will be the note to change and replaces it will all the arguments specified later.
 
 * **clear**: Deletes all your notes. It always asks before deleting your notes but this can be disabled using the `-n`/`--no-ask` flag.
+
+* **backup**: Copies the notes file to a another location that is supposed to be given afterwards.

@@ -160,3 +160,15 @@ void clear(const char *const &notesPath) {
     FILE *notes_f = fopen(notesPath, "w");
     fclose(notes_f);
 }
+
+void backup(const char *const path, const char *const notesPath) {
+    using namespace std::filesystem;
+
+    try {
+        copy_file(notesPath, path, copy_options::overwrite_existing);
+    } catch (__cxx11::filesystem_error &) {
+        copy_file(notesPath,
+                  path + std::string(path[strLen(path) - 1] == '/' ? "notes.txt" : "/notes.txt"),
+                  copy_options::overwrite_existing);
+    }
+}
