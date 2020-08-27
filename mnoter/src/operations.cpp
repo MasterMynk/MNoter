@@ -133,11 +133,11 @@ void move(const short &from, const short &to, const std::string &homeDir,
 
     /******** Now cycle through the notes putting the copied note where is deserves to be *********/
     for (short i = 1; i <= lastN; ++i) {
-        if (from == i) {
+        if (from == i) {   // We've reached the line to move
             skipLines(notes_f, 1);
             continue;
-        } else if (to == i) {
-            if (to == lastN) {
+        } else if (to == i) {   // We've reached where the line should be moved
+            if (to > from) {
                 copyLines(notes_f, tmp_f, 1);
                 fprintf(tmp_f, "%s\n", buff);
                 continue;
