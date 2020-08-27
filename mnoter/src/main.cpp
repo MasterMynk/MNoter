@@ -9,9 +9,12 @@
 #include "functions.hpp"
 #include "operations.hpp"
 
+#define SILENT_BIT 0b00000001
+#define NO_ASK_BIT 0b00000010
+
 int main(int argc, char *argv[]) {
     std::string homeDir = getenv("HOME");
-    bool silentF = false;
+    uint8_t flags = false;
     char *editor = nullptr;
 
     std::filesystem::create_directory(homeDir += "/.config/MNoter");
@@ -20,12 +23,12 @@ int main(int argc, char *argv[]) {
 
     for (short i = 1; i < argc; ++i)
         if (argv[i][0] == '-')
-            if (argv[i][1] == 'h' || argv[i][2] == 'h') {   // Help Flag
+            if (argv[i][1] == 'h' || argv[i][2] == 'h') {   // Help flag
                 help();
-                silentF = true;
+                flags |= SILENT_BIT;
                 break;
-            } else if (argv[i][1] == 's' || argv[i][2] == 's')   // Silent Flag
-                silentF = true;
+            } else if (argv[i][1] == 's' || argv[i][2] == 's')   // Silent flag
+                flags |= SILENT_BIT;
             else if (argv[i][1] == 'e' || argv[i][2] == 'e') {   // Editor flag
                 short j = 0;
 
@@ -36,9 +39,11 @@ int main(int argc, char *argv[]) {
 
             } else if (argv[i][1] == 'v' || argv[i][2] == 'v') {
                 printVersion();
-                silentF = true;
+                flags |= SILENT_BIT;
                 break;
-            } else
+            } else if (argv[i][1] == 'n' || argv[i][2] == 'n')   // No ask flag
+                flags |= NO_ASK_BIT;
+            else
                 error((std::string("Unrecognized flag ") + argv[i]).c_str());
         else if (argv[i][0] == 'a') {   // Add operation
             add(&argv[i + 1], argc - (i + 1), notesPath.c_str());
@@ -46,7 +51,7 @@ int main(int argc, char *argv[]) {
         } else if (argv[i][0] == 's') {
             if (argv[i][1] == 'h') {
                 show(notesPath.c_str());
-                silentF = true;
+                flags |= SILENT_BIT;
             } else {
                 short arg1, arg2;
                 if (i == (argc - 1)) {   // That means no other arguments were given
@@ -168,18 +173,22 @@ int main(int argc, char *argv[]) {
                 break;
             } else {   // Clear operation
                 char inp;
-                printf("Are you sure you want to delete all your notes [y/n]: ");
-                scanf("%c", &inp);
 
-                if (inp == 'y')
+                if (!(flags & NO_ASK_BIT)) {
+                    printf("Are you sure you want to delete all your notes [y/n]: ");
+                    scanf("%c", &inp);
+
+                    if (inp == 'y')
+                        clear(notesPath.c_str());
+                    else
+                        printf("Input was '%c'. Exiting without deleting notes.\n", inp);
+                } else
                     clear(notesPath.c_str());
-                else
-                    printf("Input was '%c'. Exiting without deleting notes.\n", inp);
 
                 break;
             }
         }
 
-    if (!silentF)
-        show(notesPath.c_str());
+    if (!(flags & SILENT_BIT))     // If the silent bit is not set
+        show(notesPath.c_str());   // Show the notes
 }
