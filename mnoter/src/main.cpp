@@ -4,11 +4,17 @@
  * Email: shigoankerMayank@gmail.com
  */
 
+#include <filesystem>
+
 #include "functions.hpp"
+#include "operations.hpp"
+
+#define SILENT_BIT 0b00000001
+#define NO_ASK_BIT 0b00000010
 
 int main(int argc, char *argv[]) {
     std::string homeDir = getenv("HOME");
-    bool silentF = false;
+    uint8_t flags = false;
     char *editor = nullptr;
 
     std::filesystem::create_directory(homeDir += "/.config/MNoter");
@@ -17,12 +23,12 @@ int main(int argc, char *argv[]) {
 
     for (short i = 1; i < argc; ++i)
         if (argv[i][0] == '-')
-            if (argv[i][1] == 'h' || argv[i][2] == 'h') {   // Help Flag
+            if (argv[i][1] == 'h' || argv[i][2] == 'h') {   // Help flag
                 help();
-                silentF = true;
+                flags |= SILENT_BIT;
                 break;
-            } else if (argv[i][1] == 's' || argv[i][2] == 's')   // Silent Flag
-                silentF = true;
+            } else if (argv[i][1] == 's' || argv[i][2] == 's')   // Silent flag
+                flags |= SILENT_BIT;
             else if (argv[i][1] == 'e' || argv[i][2] == 'e') {   // Editor flag
                 short j = 0;
 
@@ -33,17 +39,19 @@ int main(int argc, char *argv[]) {
 
             } else if (argv[i][1] == 'v' || argv[i][2] == 'v') {
                 printVersion();
-                silentF = true;
+                flags |= SILENT_BIT;
                 break;
-            } else
+            } else if (argv[i][1] == 'n' || argv[i][2] == 'n')   // No ask flag
+                flags |= NO_ASK_BIT;
+            else
                 error((std::string("Unrecognized flag ") + argv[i]).c_str());
-        else if (argv[i][0] == 'a') {
+        else if (argv[i][0] == 'a') {   // Add operation
             add(&argv[i + 1], argc - (i + 1), notesPath.c_str());
             break;
         } else if (argv[i][0] == 's') {
             if (argv[i][1] == 'h') {
                 show(notesPath.c_str());
-                silentF = true;
+                flags |= SILENT_BIT;
             } else {
                 short arg1, arg2;
                 if (i == (argc - 1)) {   // That means no other arguments were given
@@ -71,7 +79,7 @@ int main(int argc, char *argv[]) {
                 swap(arg1, arg2, homeDir, notesPath.c_str());
             }
             break;
-        } else if (argv[i][0] == 'r') {
+        } else if (argv[i][0] == 'r') {   // Remove operation
             short len = argc - (i + 1), notesToRem[!len ? 1 : len]{0};
 
             if (!len) {
@@ -87,7 +95,7 @@ int main(int argc, char *argv[]) {
             remove(notesToRem, len, homeDir, notesPath.c_str());
 
             break;
-        } else if (argv[i][0] == 'm') {
+        } else if (argv[i][0] == 'm') {   // Move operation
             short from, to;
 
             if (i == (argc - 1)) {   // That means no other arguments were given
@@ -113,7 +121,7 @@ int main(int argc, char *argv[]) {
             move(from, to, homeDir, notesPath.c_str());
 
             break;
-        } else if (argv[i][0] == 'e') {
+        } else if (argv[i][0] == 'e') {   // Edit operation
             bool hasAllocated = false;
 
             if (!editor)
@@ -130,39 +138,57 @@ int main(int argc, char *argv[]) {
             if (hasAllocated)
                 delete[] editor;
         } else if (argv[i][0] == 'c') {
-            short noteToChange, len;
-            char *text;
+            if (argv[i][1] == 'h') {   // Change operation
+                short noteToChange, len;
+                char *text;
 
-            if (i == (argc - 1)) {   // No other arguments were supplied
-                printf("Please enter the number of the note to change: ");
-                scanf("%hu", &noteToChange);
+                if (i == (argc - 1)) {   // No other arguments were supplied
+                    printf("Please enter the number of the note to change: ");
+                    scanf("%hu", &noteToChange);
 
-                printf("Now please enter the text I should put in place of note %d: ",
-                       noteToChange);
+                    printf("Now please enter the text I should put in place of note %d: ",
+                           noteToChange);
 
-                getchar();   // Skip the newline character which remains after the user enters the
-                             // number of the note to change
+                    getchar();   // Skip the newline character which remains after the user enters
+                                 // the number of the note to change
 
-                text = getLine();
-                len = 1;
-            } else if (i == (argc - 2)) {   // Only one arg was supplied
-                check<bool>(!isNum(argv[i + 1]), "Please enter a valid number!!");
-                noteToChange = toInt(argv[i + 1]);
+                    text = getLine();
+                    len = 1;
+                } else if (i == (argc - 2)) {   // Only one arg was supplied
+                    check<bool>(!isNum(argv[i + 1]), "Please enter a valid number!!");
+                    noteToChange = toInt(argv[i + 1]);
 
-                printf("Please enter the text I should put in place of note %d: ", noteToChange);
-                text = getLine();
-                len = 1;
-            } else {   // Everything was given
-                check<bool>(!isNum(argv[i + 1]), "Please enter a valid number!!");
-                noteToChange = toInt(argv[i + 1]);
-                len = argc - (i + 2);
+                    printf("Please enter the text I should put in place of note %d: ",
+                           noteToChange);
+                    text = getLine();
+                    len = 1;
+                } else {   // Everything was given
+                    check<bool>(!isNum(argv[i + 1]), "Please enter a valid number!!");
+                    noteToChange = toInt(argv[i + 1]);
+                    len = argc - (i + 2);
+                }
+
+                change(noteToChange, &((i == (argc - 1) || i == (argc - 2)) ? text : argv[i + 2]),
+                       len, homeDir, notesPath.c_str());
+                break;
+            } else {   // Clear operation
+                char inp;
+
+                if (!(flags & NO_ASK_BIT)) {
+                    printf("Are you sure you want to delete all your notes [y/n]: ");
+                    scanf("%c", &inp);
+
+                    if (inp == 'y')
+                        clear(notesPath.c_str());
+                    else
+                        printf("Input was '%c'. Exiting without deleting notes.\n", inp);
+                } else
+                    clear(notesPath.c_str());
+
+                break;
             }
-
-            change(noteToChange, &((i == (argc - 1) || i == (argc - 2)) ? text : argv[i + 2]), len,
-                   homeDir, notesPath.c_str());
-            break;
         }
 
-    if (!silentF)
-        show(notesPath.c_str());
+    if (!(flags & SILENT_BIT))     // If the silent bit is not set
+        show(notesPath.c_str());   // Show the notes
 }

@@ -3,7 +3,7 @@ A small program that helps you manage your notes.
 ## usage:
 *mnoter \<options> \<operation>*
 ### options:
-The options available are `-h`/`--help`, `-s`/`--silent`, `-e`/`--editor`.
+The options available are `-h`/`--help`, `-s`/`--silent`, `-e`/`--editor`, `-v`/`--version` and `-n`/`--no-ask`.
 
 * **-h**/**--help**: Prints out this message.
 
@@ -14,8 +14,10 @@ The options available are `-h`/`--help`, `-s`/`--silent`, `-e`/`--editor`.
 
 * **-v**/**--version**: Prints out the version and exits.
 
+* **-n**/**--no-ask**: This flag only has an effect when used with the `clear` operation. It only disables the confirmation prompt.
+
 ### operations:
-There are three operation this program can perform `add`, `show`, `remove`, `swap`, `move` and `edit`.
+There are three operation this program can perform `add`, `show`, `remove`, `swap`, `move`, `edit` and `clear`.
 
 * **add**: Creates a new note with all the parameters given afterwards.
 
@@ -30,3 +32,5 @@ There are three operation this program can perform `add`, `show`, `remove`, `swa
 * **edit**: This opens the file that stores the notes in a text editor so that you can edit it. Every line is a new note. If no editor is supplied with the `-e`/`--editor` flags, MNoter will first check the EDITOR variable and if an editor is still not found then it will ask for the editor.
 
 * **change**: Accepts a number which will be the note to change and replaces it will all the arguments specified later.
+
+* **clear**: Deletes all your notes. It always asks before deleting your notes but this can be disabled using the `-n`/`--no-ask` flag.
