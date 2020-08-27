@@ -155,3 +155,8 @@ void move(const short &from, const short &to, const std::string &homeDir,
 
     replaceTmpNotes(notesPath, tmpPath.c_str());
 }
+
+void clear(const char *const &notesPath) {
+    FILE *notes_f = fopen(notesPath, "w");
+    fclose(notes_f);
+}

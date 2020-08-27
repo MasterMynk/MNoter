@@ -40,7 +40,7 @@ int main(int argc, char *argv[]) {
                 break;
             } else
                 error((std::string("Unrecognized flag ") + argv[i]).c_str());
-        else if (argv[i][0] == 'a') {
+        else if (argv[i][0] == 'a') {   // Add operation
             add(&argv[i + 1], argc - (i + 1), notesPath.c_str());
             break;
         } else if (argv[i][0] == 's') {
@@ -74,7 +74,7 @@ int main(int argc, char *argv[]) {
                 swap(arg1, arg2, homeDir, notesPath.c_str());
             }
             break;
-        } else if (argv[i][0] == 'r') {
+        } else if (argv[i][0] == 'r') {   // Remove operation
             short len = argc - (i + 1), notesToRem[!len ? 1 : len]{0};
 
             if (!len) {
@@ -90,7 +90,7 @@ int main(int argc, char *argv[]) {
             remove(notesToRem, len, homeDir, notesPath.c_str());
 
             break;
-        } else if (argv[i][0] == 'm') {
+        } else if (argv[i][0] == 'm') {   // Move operation
             short from, to;
 
             if (i == (argc - 1)) {   // That means no other arguments were given
@@ -116,7 +116,7 @@ int main(int argc, char *argv[]) {
             move(from, to, homeDir, notesPath.c_str());
 
             break;
-        } else if (argv[i][0] == 'e') {
+        } else if (argv[i][0] == 'e') {   // Edit operation
             bool hasAllocated = false;
 
             if (!editor)
@@ -133,37 +133,42 @@ int main(int argc, char *argv[]) {
             if (hasAllocated)
                 delete[] editor;
         } else if (argv[i][0] == 'c') {
-            short noteToChange, len;
-            char *text;
+            if (argv[i][1] == 'h') {   // Change operation
+                short noteToChange, len;
+                char *text;
 
-            if (i == (argc - 1)) {   // No other arguments were supplied
-                printf("Please enter the number of the note to change: ");
-                scanf("%hu", &noteToChange);
+                if (i == (argc - 1)) {   // No other arguments were supplied
+                    printf("Please enter the number of the note to change: ");
+                    scanf("%hu", &noteToChange);
 
-                printf("Now please enter the text I should put in place of note %d: ",
-                       noteToChange);
+                    printf("Now please enter the text I should put in place of note %d: ",
+                           noteToChange);
 
-                getchar();   // Skip the newline character which remains after the user enters the
-                             // number of the note to change
+                    getchar();   // Skip the newline character which remains after the user enters
+                                 // the number of the note to change
 
-                text = getLine();
-                len = 1;
-            } else if (i == (argc - 2)) {   // Only one arg was supplied
-                check<bool>(!isNum(argv[i + 1]), "Please enter a valid number!!");
-                noteToChange = toInt(argv[i + 1]);
+                    text = getLine();
+                    len = 1;
+                } else if (i == (argc - 2)) {   // Only one arg was supplied
+                    check<bool>(!isNum(argv[i + 1]), "Please enter a valid number!!");
+                    noteToChange = toInt(argv[i + 1]);
 
-                printf("Please enter the text I should put in place of note %d: ", noteToChange);
-                text = getLine();
-                len = 1;
-            } else {   // Everything was given
-                check<bool>(!isNum(argv[i + 1]), "Please enter a valid number!!");
-                noteToChange = toInt(argv[i + 1]);
-                len = argc - (i + 2);
+                    printf("Please enter the text I should put in place of note %d: ",
+                           noteToChange);
+                    text = getLine();
+                    len = 1;
+                } else {   // Everything was given
+                    check<bool>(!isNum(argv[i + 1]), "Please enter a valid number!!");
+                    noteToChange = toInt(argv[i + 1]);
+                    len = argc - (i + 2);
+                }
+
+                change(noteToChange, &((i == (argc - 1) || i == (argc - 2)) ? text : argv[i + 2]),
+                       len, homeDir, notesPath.c_str());
+                break;
+            } else {   // Clear operation
+                clear(notesPath.c_str());
             }
-
-            change(noteToChange, &((i == (argc - 1) || i == (argc - 2)) ? text : argv[i + 2]), len,
-                   homeDir, notesPath.c_str());
-            break;
         }
 
     if (!silentF)
