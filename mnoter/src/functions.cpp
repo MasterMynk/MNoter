@@ -132,3 +132,10 @@ void change(const short &note, char **const &toChangeWith, const short &len,
 
     replaceTmpNotes(notesPath, tmpPath.c_str());
 }
+
+char lower(const char &letter) {
+    if ((letter >= 'A') && (letter <= 'Z'))
+        return (letter + 32);
+    else
+        return letter;
+}

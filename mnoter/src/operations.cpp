@@ -27,19 +27,30 @@ void show(const char *const &notesPath) {
     }
 }
 
-void remove(const short notes[], const short &len, const std::string &homeDir,
+void remove(char **const &notes, short len, const std::string &homeDir,
             const char *const &notesPath) {
     std::string tmpPath = homeDir + "/tmp.txt";
 
     FILE *notes_f = fopen(notesPath, "r"), *tmp_f = fopen(tmpPath.c_str(), "w");
+    short notesToRem[!len ? 1 : len];
 
     check<bool>(!notes_f, "Couldn't open notes file!!");
     check<bool>(!tmp_f, "Couldn't open a temporary file!!");
 
+    if (!len) {
+        printf("Please enter a note that I should remove: ");
+        scanf("%hu", &notesToRem[0]);
+        len = 1;
+    } else
+        for (short j = 0; j < len; ++j) {
+            check<bool>(!isNum(notes[j]), (std::string(notes[j]) + " is now a number!!").c_str());
+            notesToRem[j] = toInt(notes[j]);
+        }
+
     const short lastN = countNumLines(notes_f);
 
     for (short i = 0; i < len; ++i)
-        check<bool>(notes[i] > lastN || notes[i] <= 0,
+        check<bool>(notesToRem[i] > lastN || notesToRem[i] <= 0,
                     "The note you wish to remove doesn't exist!!\n");
 
     /********************** Copy all of the notes except the ones to remove ***********************/
@@ -47,7 +58,7 @@ void remove(const short notes[], const short &len, const std::string &homeDir,
         bool flag = false;
 
         for (short j = 0; j < len; ++j)
-            if (notes[j] == i) {
+            if (notesToRem[j] == i) {
                 flag = true;
                 skipLines(notes_f, 1);
 
