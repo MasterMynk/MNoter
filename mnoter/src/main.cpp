@@ -60,31 +60,8 @@ int main(int argc, char *argv[]) {
         } else if (lower(argv[i][0]) == 'r') {   // Remove
             remove(&argv[i + 1], argc - (i + 1), homeDir, notesPath.c_str());
             break;
-        } else if (argv[i][0] == 'm') {   // Move operation
-            short from, to;
-
-            if (i == (argc - 1)) {   // That means no other arguments were given
-                printf("Please tell me which note to move where (seperated by a space): ");
-                scanf("%hu %hu", &from, &to);
-            } else if (i == (argc - 2)) {   // That means only one argument was given
-                check<bool>(!isNum(argv[i + 1]),
-                            (std::string(argv[i + 1]) + " is not a number you cowhead!!").c_str());
-
-                from = toInt(argv[i + 1]);
-                printf("Please tell me where should I move note %d: ", from);
-                scanf("%hu", &to);
-            } else {
-                check<bool>(!isNum(argv[i + 1]),
-                            (std::string(argv[i + 1]) + " is not a number you cowhead!!").c_str());
-                check<bool>(!isNum(argv[i + 2]),
-                            (std::string(argv[i + 2]) + " is not a number you cowhead!!").c_str());
-
-                from = toInt(argv[i + 1]);
-                to = toInt(argv[i + 2]);
-            }
-
-            move(from, to, homeDir, notesPath.c_str());
-
+        } else if (argv[i][0] == 'm') {   // Move
+            move(&argv[i + 1], argc - (i + 1), homeDir, notesPath.c_str());
             break;
         } else if (argv[i][0] == 'e') {   // Edit operation
             bool hasAllocated = false;

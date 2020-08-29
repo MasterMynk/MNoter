@@ -139,11 +139,29 @@ void swap(char **const &argv, const short &len, const std::string &homeDir,
     replaceTmpNotes(notesPath, tmpPath.c_str());
 }
 
-void move(const short &from, const short &to, const std::string &homeDir,
+void move(char **const &argv, const short &len, const std::string &homeDir,
           const char *const &notesPath) {
     std::string tmpPath = homeDir + "/tmp.txt";
     FILE *notes_f = fopen(notesPath, "r"), *tmp_f = fopen(tmpPath.c_str(), "w");
     char *buff;
+    short from, to;
+
+    if (!len) {   // That means no other arguments were given
+        printf("Please tell me which note to move where (seperated by a space): ");
+        scanf("%hu %hu", &from, &to);
+    } else if (len == 1) {   // That means only one argument was given
+        check<bool>(!isNum(argv[0]), (std::string(argv[0]) + " is not a number!!").c_str());
+
+        from = toInt(argv[0]);
+        printf("Please tell me where should I move note %d: ", from);
+        scanf("%hu", &to);
+    } else {
+        check<bool>(!isNum(argv[0]), (std::string(argv[0]) + " is not a number!!").c_str());
+        check<bool>(!isNum(argv[1]), (std::string(argv[1]) + " is not a number!!").c_str());
+
+        from = toInt(argv[0]);
+        to = toInt(argv[1]);
+    }
 
     if (from == to)   // Don't waste time because note from is already at note from
         return;
