@@ -273,8 +273,23 @@ void change(char **argv, short len, const std::string &homeDir, const char *cons
     replaceTmpNotes(notesPath, tmpPath.c_str());
 }
 
-void clear(const char *const &notesPath) {
-    FILE *notes_f = fopen(notesPath, "w");
+void clear(const char *const &notesPath, uint8_t &flags) {
+    FILE *notes_f;
+    char inp;
+
+    if (!(flags & NO_ASK_BIT)) {
+        printf("Are you sure you want to delete all your notes [y/n]: ");
+        scanf("%c", &inp);
+
+        if (inp == 'y')
+            notes_f = fopen(notesPath, "w");
+        else {
+            printf("Input was '%c'. Exiting without deleting notes.\n", inp);
+            return;
+        }
+    } else
+        notes_f = fopen(notesPath, "w");
+
     fclose(notes_f);
 }
 

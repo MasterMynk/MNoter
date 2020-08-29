@@ -8,10 +8,6 @@
 #include "functions.hpp"
 #include "operations.hpp"
 
-#define SILENT_BIT   0b00000001
-#define NO_ASK_BIT   0b00000010
-#define FOUND_OP_BIT 0b00000100
-
 int main(int argc, char *argv[]) {
     std::string homeDir = getenv("HOME");
     uint8_t flags = false;
@@ -71,19 +67,7 @@ int main(int argc, char *argv[]) {
                 change(&argv[i + 1], argc - (i + 1), homeDir, notesPath.c_str());
                 break;
             } else {   // Clear operation
-                char inp;
-
-                if (!(flags & NO_ASK_BIT)) {
-                    printf("Are you sure you want to delete all your notes [y/n]: ");
-                    scanf("%c", &inp);
-
-                    if (inp == 'y')
-                        clear(notesPath.c_str());
-                    else
-                        printf("Input was '%c'. Exiting without deleting notes.\n", inp);
-                } else
-                    clear(notesPath.c_str());
-
+                clear(notesPath.c_str(), flags);
                 break;
             }
         } else if (argv[i][0] == 'b') {
