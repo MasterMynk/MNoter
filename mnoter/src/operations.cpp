@@ -76,17 +76,35 @@ void remove(char **const &notes, short len, const std::string &homeDir,
     replaceTmpNotes(notesPath, tmpPath.c_str());
 }
 
-void swap(const short &from, const short &to, const std::string &homeDir,
+void swap(char **const &argv, const short &len, const std::string &homeDir,
           const char *const &notesPath) {
     const std::string tmpPath = homeDir + "/tmp.txt";
     FILE *tmp_f = fopen(tmpPath.c_str(), "w"), *notes_f = fopen(notesPath, "r");
     char *buff;
+    short to, from;
 
     check<bool>(!tmp_f, "Couldn't open temporary file!!");
     check<bool>(!notes_f,
                 "Couldn't open notes file!!\n"
                 "       You probably don't have any notes yet.\n"
                 "       Add a note with the command mnoter add");
+
+    if (!len) {   // That means no other arguments were given
+        printf("Please tell me which two notes to swap (seperated by a space): ");
+        scanf("%hu %hu", &to, &from);
+    } else if (len == 1) {   // That means only one argument was given
+        check<bool>(!isNum(argv[0]), (std::string(argv[0]) + " is not a number!!").c_str());
+
+        to = toInt(argv[0]);
+        printf("Please tell me which note should I swap with %d: ", to);
+        scanf("%hu", &from);
+    } else {
+        check<bool>(!isNum(argv[0]), (std::string(argv[0]) + " is not a number!!").c_str());
+        check<bool>(!isNum(argv[1]), (std::string(argv[1]) + " is not a number!!").c_str());
+
+        to = toInt(argv[0]);
+        from = toInt(argv[1]);
+    }
 
     const short lastN = countNumLines(notes_f);
     check<bool>(to > lastN || to <= 0 || from > lastN || from <= 0,
