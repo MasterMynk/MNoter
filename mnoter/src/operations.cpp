@@ -221,6 +221,58 @@ void edit(const char *const &notesPath, char *&editor) {
         delete[] editor;
 }
 
+void change(char **argv, short len, const std::string &homeDir, const char *const &notesPath) {
+    std::string tmpPath = homeDir + "/tmp.txt";
+    FILE *notes_f = fopen(notesPath, "r"), *tmp_f = fopen(tmpPath.c_str(), "w");
+    short noteToChange;
+    char *text = nullptr;
+    bool useText = false;
+
+    if (!len) {   // No other arguments were supplied
+        printf("Please enter the number of the note to change: ");
+        scanf("%hu", &noteToChange);
+
+        printf("Now enter the text I should put in place of note %d: ", noteToChange);
+
+        getchar();   // Skip the newline character which remains after the user
+                     // enters the number of the note to change
+
+        text = getLine();
+        len = 2;
+        useText = true;
+    } else if (len == 1) {   // Only one arg was supplied
+        check<bool>(!isNum(argv[0]), "Please enter a valid number!!");
+        noteToChange = toInt(argv[0]);
+
+        printf("Please enter the text I should put in place of note %d: ", noteToChange);
+        text = getLine();
+        len = 2;
+        useText = true;
+    } else {   // Everything was given
+        check<bool>(!isNum(argv[0]), "Please enter a valid number!!");
+        noteToChange = toInt(argv[0]);
+    }
+
+    check<bool>(!notes_f, "Couldn't open notes file. You probably don't have any notes yet.");
+    check<bool>(!tmp_f, "Couldn't open a temporary file!!");
+
+    const short lastN = countNumLines(notes_f);
+    check<bool>(noteToChange > lastN || noteToChange <= 0,
+                "The note you want to change doesn't exist!!");
+
+    copyLines(notes_f, tmp_f, noteToChange - 1);   // Copy all the notes before the note to change
+    skipLines(notes_f, 1);                         // Skip the like to be changed
+    for (short i = 1; i < len; ++i)                // Put the new line in its place
+        fprintf(tmp_f, "%s ", useText ? text : argv[i]);
+    fputc('\n', tmp_f);
+    copyLines(notes_f, tmp_f, lastN - noteToChange);
+
+    fclose(notes_f);
+    fclose(tmp_f);
+
+    replaceTmpNotes(notesPath, tmpPath.c_str());
+}
+
 void clear(const char *const &notesPath) {
     FILE *notes_f = fopen(notesPath, "w");
     fclose(notes_f);
