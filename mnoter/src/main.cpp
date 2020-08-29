@@ -64,21 +64,8 @@ int main(int argc, char *argv[]) {
             move(&argv[i + 1], argc - (i + 1), homeDir, notesPath.c_str());
             break;
         } else if (argv[i][0] == 'e') {   // Edit operation
-            bool hasAllocated = false;
-
-            if (!editor)
-                editor = getenv("EDITOR");
-
-            if (!editor) {
-                printf("Please enter you editor of choice: ");
-                editor = getLine();
-                hasAllocated = true;
-            }
-
             edit(notesPath.c_str(), editor);
-
-            if (hasAllocated)
-                delete[] editor;
+            break;
         } else if (argv[i][0] == 'c') {
             if (argv[i][1] == 'h') {   // Change operation
                 short noteToChange, len;

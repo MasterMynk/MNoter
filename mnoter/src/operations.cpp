@@ -203,6 +203,24 @@ void move(char **const &argv, const short &len, const std::string &homeDir,
     replaceTmpNotes(notesPath, tmpPath.c_str());
 }
 
+void edit(const char *const &notesPath, char *&editor) {
+    bool hasAllocated = false;
+
+    if (!editor)
+        editor = getenv("EDITOR");
+
+    if (!editor) {
+        printf("Please enter you editor of choice: ");
+        editor = getLine();
+        hasAllocated = true;
+    }
+
+    system((std::string(editor) + ' ' + notesPath).c_str());
+
+    if (hasAllocated)
+        delete[] editor;
+}
+
 void clear(const char *const &notesPath) {
     FILE *notes_f = fopen(notesPath, "w");
     fclose(notes_f);

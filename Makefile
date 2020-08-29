@@ -1,7 +1,7 @@
 EXEC:=mnoter
 TARGETS:=${EXEC} # Any additional library should be add before executable
 DEFS:=VERSION=\\\"1.4.1\\\" # Idk why so many \ are needed but this is the way it works
-ARGS:=move 1 33
+ARGS:=-s --editor="vim" edit
 
 export SHELL:=/bin/bash
 DEBUGFLAG:=-g

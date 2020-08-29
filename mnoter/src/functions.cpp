@@ -105,10 +105,6 @@ void replaceTmpNotes(const char *const notesPath, const char *const tmpPath) {
     rename(tmpPath, notesPath);
 }
 
-void edit(const char *const &notesPath, const char *const &editor) {
-    system((std::string(editor) + ' ' + notesPath).c_str());
-}
-
 void change(const short &note, char **const &toChangeWith, const short &len,
             const std::string &homeDir, const char *const &notesPath) {
     std::string tmpPath = homeDir + "/tmp.txt";

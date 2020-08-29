@@ -12,7 +12,7 @@ void swap(char **const &argv, const short &len, const std::string &homeDir,
           const char *const &notesPath);
 void move(char **const &argv, const short &len, const std::string &homeDir,
           const char *const &notesPath);
-void edit(const char *const &notesPath, const char *const &editor);
+void edit(const char *const &notesPath, char *&editor);
 void change(const short &note, char **const &toChangeWith, const short &len,
             const std::string &homeDir, const char *const &notesPath);
 void clear(const char *const &notesPath);
