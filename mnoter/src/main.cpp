@@ -65,7 +65,7 @@ int main(int argc, char *argv[]) {
                 break;
             }
         } else if (argv[i][0] == 'b') {
-            backup(&argv[i + 1], argc - (i + 1), notesPath.c_str());
+            backup(&argv[i + 1], argc - (i + 1), notesPath.c_str(), flags);
             break;
         }
 

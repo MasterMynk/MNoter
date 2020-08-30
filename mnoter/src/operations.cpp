@@ -332,16 +332,23 @@ void clear(char **const &argv, const short &len, const char *const &notesPath, u
     fclose(notes_f);
 }
 
-void backup(char **const &argv, const short &len, const char *const notesPath) {
+void backup(char **const &argv, const short &len, const char *const notesPath, uint8_t &flags) {
     using namespace std::filesystem;
 
-    char *path;
-    bool hasAllocated = !len;
+    char *path = nullptr;
+    bool hasAllocated = false;
 
-    if (!len)   // No other args were supplied
+    for (short i = 0; i < len; ++i)
+        if (argv[i][0] == '-' && (argv[i][1] == 's' || argv[i][2] == 's'))
+            flags |= SILENT_BIT;
+        else
+            path = argv[i];
+
+    if (!path) {   // No other args were supplied
         printf("Please enter the path to save your notes file: ");
-
-    path = (!len) ? getLine() : argv[0];
+        path = getLine();
+        hasAllocated = true;
+    }
 
     try {
         copy_file(notesPath, path, copy_options::overwrite_existing);

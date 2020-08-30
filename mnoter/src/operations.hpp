@@ -20,4 +20,4 @@ void edit(char **const &argv, const short &len, const char *const &notesPath, ch
           uint8_t &flags);
 void change(char **argv, short len, const std::string &homeDir, const char *const &notesPath);
 void clear(char **const &argv, const short &len, const char *const &notesPath, uint8_t &flags);
-void backup(char **const &argv, const short &len, const char *const notesPath);
+void backup(char **const &argv, const short &len, const char *const notesPath, uint8_t &flags);
