@@ -293,8 +293,16 @@ void clear(const char *const &notesPath, uint8_t &flags) {
     fclose(notes_f);
 }
 
-void backup(const char *const path, const char *const notesPath) {
+void backup(char **const &argv, const short &len, const char *const notesPath) {
     using namespace std::filesystem;
+
+    char *path;
+    bool hasAllocated = !len;
+
+    if (!len)   // No other args were supplied
+        printf("Please enter the path to save your notes file: ");
+
+    path = (!len) ? getLine() : argv[0];
 
     try {
         copy_file(notesPath, path, copy_options::overwrite_existing);
@@ -303,4 +311,6 @@ void backup(const char *const path, const char *const notesPath) {
                   path + std::string(path[strLen(path) - 1] == '/' ? "notes.txt" : "/notes.txt"),
                   copy_options::overwrite_existing);
     }
+
+    delete[](hasAllocated ? path : nullptr);
 }

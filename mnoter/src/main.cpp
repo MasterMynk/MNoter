@@ -71,14 +71,8 @@ int main(int argc, char *argv[]) {
                 break;
             }
         } else if (argv[i][0] == 'b') {
-            char *path;
-
-            if (i == (argc - 1))   // No other args were supplied
-                printf("Please enter the path to save your notes file: ");
-
-            path = (i == (argc - 1)) ? getLine() : argv[i + 1];
-
-            backup(path, notesPath.c_str());
+            backup(&argv[i + 1], argc - (i + 1), notesPath.c_str());
+            break;
         }
 
     if (!(flags & SILENT_BIT))     // If the silent bit is not set
