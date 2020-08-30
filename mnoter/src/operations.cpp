@@ -1,5 +1,7 @@
 #include "operations.hpp"
 
+#include "flags.hpp"
+
 void add(char **const &argv, const short &argc, const char *const &notesPath) {
     FILE *notes_f = fopen(notesPath, "a");
 
@@ -223,22 +225,31 @@ void move(char **const &argv, const short &len, const std::string &homeDir,
     replaceTmpNotes(notesPath, tmpPath.c_str());
 }
 
-void edit(const char *const &notesPath, char *&editor) {
+void edit(char **const &argv, const short &len, const char *const &notesPath, char *&editorStr,
+          uint8_t &flags) {
     bool hasAllocated = false;
 
-    if (!editor)
-        editor = getenv("EDITOR");
+    for (short i = 0; i < len; ++i)
+        if (argv[i][0] == '-') {
+            if (argv[i][1] == 's' || argv[i][2] == 's')   // Silent flag
+                flags |= SILENT_BIT;
+            else if (argv[i][1] == 'e' || argv[i][2] == 'e')   // Editor flag
+                editor(argv[i], editorStr);
+        }
 
-    if (!editor) {
+    if (!editorStr)
+        editorStr = getenv("EDITOR");
+
+    if (!editorStr) {
         printf("Please enter you editor of choice: ");
-        editor = getLine();
+        editorStr = getLine();
         hasAllocated = true;
     }
 
-    system((std::string(editor) + ' ' + notesPath).c_str());
+    system((std::string(editorStr) + ' ' + notesPath).c_str());
 
     if (hasAllocated)
-        delete[] editor;
+        delete[] editorStr;
 }
 
 void change(char **argv, short len, const std::string &homeDir, const char *const &notesPath) {

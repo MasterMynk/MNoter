@@ -6,3 +6,4 @@
 
 void help();
 void version();
+void editor(char *const &str, char *&editor);

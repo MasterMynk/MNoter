@@ -16,7 +16,8 @@ void swap(char **const &argv, short len, const std::string &homeDir, const char 
           uint8_t &flags);
 void move(char **const &argv, const short &len, const std::string &homeDir,
           const char *const &notesPath, uint8_t &flags);
-void edit(const char *const &notesPath, char *&editor);
+void edit(char **const &argv, const short &len, const char *const &notesPath, char *&editorStr,
+          uint8_t &flags);
 void change(char **argv, short len, const std::string &homeDir, const char *const &notesPath);
 void clear(const char *const &notesPath, uint8_t &flags);
 void backup(char **const &argv, const short &len, const char *const notesPath);

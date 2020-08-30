@@ -11,7 +11,7 @@
 int main(int argc, char *argv[]) {
     std::string homeDir = getenv("HOME");
     uint8_t flags = false;
-    char *editor = nullptr;
+    char *editorStr = nullptr;
 
     std::filesystem::create_directory(homeDir += "/.config/MNoter");
 
@@ -23,21 +23,15 @@ int main(int argc, char *argv[]) {
                 help();
                 flags |= SILENT_BIT;
                 break;
-            } else if (argv[i][1] == 's' || argv[i][2] == 's')   // Silent flag
-                flags |= SILENT_BIT;
-            else if (argv[i][1] == 'e' || argv[i][2] == 'e') {   // Editor flag
-                short j = 0;
-
-                for (; argv[i][j] != '='; ++j)
-                    ;
-                ++j;
-                editor = &argv[i][j];
-
             } else if (argv[i][1] == 'v' || argv[i][2] == 'v') {
                 version();
                 flags |= SILENT_BIT;
                 break;
-            } else if (argv[i][1] == 'n' || argv[i][2] == 'n')   // No ask flag
+            } else if (argv[i][1] == 's' || argv[i][2] == 's')   // Silent flag
+                flags |= SILENT_BIT;
+            else if (argv[i][1] == 'e' || argv[i][2] == 'e')   // Editor flag
+                editor(argv[i], editorStr);
+            else if (argv[i][1] == 'n' || argv[i][2] == 'n')   // No ask flag
                 flags |= NO_ASK_BIT;
             else
                 error((std::string("Unrecognized flag ") + argv[i]).c_str());
@@ -60,7 +54,7 @@ int main(int argc, char *argv[]) {
             move(&argv[i + 1], argc - (i + 1), homeDir, notesPath.c_str(), flags);
             break;
         } else if (argv[i][0] == 'e') {   // Edit operation
-            edit(notesPath.c_str(), editor);
+            edit(&argv[i + 1], argc - (i + 1), notesPath.c_str(), editorStr, flags);
             break;
         } else if (argv[i][0] == 'c') {
             if (argv[i][1] == 'h') {   // Change operation
