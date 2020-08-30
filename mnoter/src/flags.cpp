@@ -60,7 +60,7 @@ void help() {
               << RESET;
 }
 
-void version() { std::cout << BOLD GREEN "MNoter " WHITE "version: " RED << VERSION << RESET; }
+void version() { std::cout << BOLD GREEN "MNoter " WHITE "version: " RED << VERSION "\n" << RESET; }
 
 void editor(char *const &str, char *&editor) {
     short j = 0;
