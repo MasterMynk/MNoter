@@ -154,51 +154,57 @@ void swap(char **const &argv, short len, const std::string &homeDir, const char 
 }
 
 void move(char **const &argv, const short &len, const std::string &homeDir,
-          const char *const &notesPath) {
+          const char *const &notesPath, uint8_t &flags) {
     std::string tmpPath = homeDir + "/tmp.txt";
     FILE *notes_f = fopen(notesPath, "r"), *tmp_f = fopen(tmpPath.c_str(), "w");
     char *buff;
-    short from, to;
-
-    if (!len) {   // That means no other arguments were given
-        printf("Please tell me which note to move where (seperated by a space): ");
-        scanf("%hu %hu", &from, &to);
-    } else if (len == 1) {   // That means only one argument was given
-        check<bool>(!isNum(argv[0]), (std::string(argv[0]) + " is not a number!!").c_str());
-
-        from = toInt(argv[0]);
-        printf("Please tell me where should I move note %d: ", from);
-        scanf("%hu", &to);
-    } else {
-        check<bool>(!isNum(argv[0]), (std::string(argv[0]) + " is not a number!!").c_str());
-        check<bool>(!isNum(argv[1]), (std::string(argv[1]) + " is not a number!!").c_str());
-
-        from = toInt(argv[0]);
-        to = toInt(argv[1]);
-    }
-
-    if (from == to)   // Don't waste time because note from is already at note from
-        return;
+    short notes[2]{0};
 
     check<bool>(!notes_f, "Couldn't open notes file!!");
     check<bool>(!tmp_f, "Couldn't open a temporary file!!");
 
+    for (short i = 0, offset = 0; i < len; ++i)
+        if (argv[i][0] == '-' && (argv[i][1] == 's' || argv[i][2] == 's')) {
+            flags |= SILENT_BIT;
+            ++offset;
+        } else {
+            if (notes[1])
+                continue;
+            check<bool>(!isNum(argv[i]), (std::string(argv[i]) + " is not a number!!").c_str());
+
+            notes[i - offset] = toInt(argv[i]);
+        }
+
+    if (!notes[0]) {
+        printf(
+            "Please enter the note I should move and the location where it should be moved "
+            "(seperated by a space): ");
+        scanf("%hu %hu", &notes[0], &notes[1]);
+    } else if (!notes[1]) {
+        printf("Please tell me where to move the note at %d: ", notes[0]);
+        scanf("%hu", &notes[1]);
+    }
+
+    if (notes[0] == notes[1])   // Don't waste time because they are both the same notes
+        return;
+
     const short lastN = countNumLines(notes_f);
-    check<bool>(from > lastN || from <= 0 || to > lastN || to < 0, "Please enter a valid number!!");
+    check<bool>(notes[0] > lastN || notes[0] <= 0 || notes[1] > lastN || notes[1] < 0,
+                "One of the notes you wish to move doesn't exist");
 
     /************************* First copy the note that has to be moved **************************/
-    skipLines(notes_f, from - 1);
+    skipLines(notes_f, notes[0] - 1);
     buff = getLine(notes_f);
 
     rewind(notes_f);
 
     /******** Now cycle through the notes putting the copied note where is deserves to be *********/
     for (short i = 1; i <= lastN; ++i) {
-        if (from == i) {   // We've reached the line to move
+        if (notes[0] == i) {   // We've reached the line to move
             skipLines(notes_f, 1);
             continue;
-        } else if (to == i) {   // We've reached where the line should be moved
-            if (to > from) {
+        } else if (notes[1] == i) {   // We've reached where the line should be moved
+            if (notes[1] > notes[0]) {
                 copyLines(notes_f, tmp_f, 1);
                 fprintf(tmp_f, "%s\n", buff);
                 continue;
