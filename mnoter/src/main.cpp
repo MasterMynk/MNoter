@@ -50,7 +50,7 @@ int main(int argc, char *argv[]) {
                 flags |= SILENT_BIT;
                 break;
             } else {   // Swap
-                swap(&argv[i + 1], argc - (i + 1), homeDir, notesPath.c_str());
+                swap(&argv[i + 1], argc - (i + 1), homeDir, notesPath.c_str(), flags);
                 break;
             }
         } else if (lower(argv[i][0]) == 'r') {   // Remove

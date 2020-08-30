@@ -42,7 +42,7 @@ void remove(char **const &notes, short len, const std::string &homeDir,
         scanf("%hu", &notesToRem[0]);
         len = 1;
     } else
-        for (short j = 0; j < len; ++j) {
+        for (short j = 0; j < len; ++j)
             if (notes[j][0] == '-')
                 if (notes[j][1] == 's' || notes[j][2] == 's') {
                     flags |= SILENT_BIT;
@@ -54,7 +54,6 @@ void remove(char **const &notes, short len, const std::string &homeDir,
                             (std::string(notes[j]) + " is not a number!!").c_str());
                 notesToRem[j - offset] = toInt(notes[j]);
             }
-        }
 
     len -= offset;
 
@@ -87,12 +86,12 @@ void remove(char **const &notes, short len, const std::string &homeDir,
     replaceTmpNotes(notesPath, tmpPath.c_str());
 }
 
-void swap(char **const &argv, const short &len, const std::string &homeDir,
-          const char *const &notesPath) {
+void swap(char **const &argv, short len, const std::string &homeDir, const char *const &notesPath,
+          uint8_t &flags) {
     const std::string tmpPath = homeDir + "/tmp.txt";
     FILE *tmp_f = fopen(tmpPath.c_str(), "w"), *notes_f = fopen(notesPath, "r");
     char *buff;
-    short to, from;
+    short notes[2]{0};
 
     check<bool>(!tmp_f, "Couldn't open temporary file!!");
     check<bool>(!notes_f,
@@ -100,48 +99,52 @@ void swap(char **const &argv, const short &len, const std::string &homeDir,
                 "       You probably don't have any notes yet.\n"
                 "       Add a note with the command mnoter add");
 
-    if (!len) {   // That means no other arguments were given
-        printf("Please tell me which two notes to swap (seperated by a space): ");
-        scanf("%hu %hu", &to, &from);
-    } else if (len == 1) {   // That means only one argument was given
-        check<bool>(!isNum(argv[0]), (std::string(argv[0]) + " is not a number!!").c_str());
+    for (short i = 0, offset = 0; i < len; ++i)
+        if (argv[i][0] == '-' && (argv[i][1] == 's' || argv[i][2] == 's')) {
+            flags |= SILENT_BIT;
+            ++offset;
+        } else {
+            if (notes[1])
+                continue;
+            check<bool>(!isNum(argv[i]), (std::string(argv[i]) + " is not a number!!").c_str());
 
-        to = toInt(argv[0]);
-        printf("Please tell me which note should I swap with %d: ", to);
-        scanf("%hu", &from);
-    } else {
-        check<bool>(!isNum(argv[0]), (std::string(argv[0]) + " is not a number!!").c_str());
-        check<bool>(!isNum(argv[1]), (std::string(argv[1]) + " is not a number!!").c_str());
+            notes[i - offset] = toInt(argv[i]);
+        }
 
-        to = toInt(argv[0]);
-        from = toInt(argv[1]);
+    if (!notes[0]) {
+        printf("Please enter the notes I should swap (seperated by a space): ");
+        scanf("%hu %hu", &notes[0], &notes[1]);
+    } else if (!notes[1]) {
+        printf("Please enter the note I should swap with %d: ", notes[0]);
+        scanf("%hu", &notes[1]);
     }
 
     const short lastN = countNumLines(notes_f);
-    check<bool>(to > lastN || to <= 0 || from > lastN || from <= 0,
+    check<bool>(notes[0] > lastN || notes[0] <= 0 || notes[1] > lastN || notes[1] <= 0,
                 "The notes you wish to swap don't exist");
 
     /************************* Copy the note which is further down first *************************/
-    skipLines(notes_f, (to > from ? to : from) - 1);
+    skipLines(notes_f, (notes[0] > notes[1] ? notes[0] : notes[1]) - 1);
     buff = getLine(notes_f);
 
     rewind(notes_f);   // Go back to the top
 
     /*********************** Now go to the note which has the lower number ************************/
     /****************** And while doing so copy stuff around ******************/
-    copyLines(notes_f, tmp_f, (to > from ? from : to) - 1);
+    copyLines(notes_f, tmp_f, (notes[0] > notes[1] ? notes[1] : notes[0]) - 1);
     printDeleteBuff(tmp_f, buff);   // Put the note copied earlier in its place
     buff = getLine(notes_f);        // And copy it into buffer
 
     /*************************** Copy the notes in between to and from ****************************/
-    copyLines(notes_f, tmp_f, (to > from ? to - from : from - to) - 1);
+    copyLines(notes_f, tmp_f,
+              (notes[0] > notes[1] ? notes[0] - notes[1] : notes[1] - notes[0]) - 1);
 
     /*********** Put the note copied earlier in its place and skip the note afterwards ************/
     printDeleteBuff(tmp_f, buff);
     skipLines(notes_f, 1);
 
     /******************************** Copy the rest of the notes *********************************/
-    copyLines(notes_f, tmp_f, to > from ? lastN - to : lastN - from);
+    copyLines(notes_f, tmp_f, notes[0] > notes[1] ? lastN - notes[0] : lastN - notes[1]);
 
     /**************** Close these because we are going to be modifying them later *****************/
     fclose(tmp_f);
