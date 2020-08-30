@@ -61,3 +61,12 @@ void help() {
 }
 
 void version() { std::cout << BOLD GREEN "MNoter " WHITE "version: " RED << VERSION << RESET; }
+
+void editor(char *const &str, char *&editor) {
+    short j = 0;
+
+    for (; str[j] != '='; ++j)
+        ;
+    ++j;
+    editor = &str[j];
+}

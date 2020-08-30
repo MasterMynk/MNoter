@@ -105,30 +105,9 @@ void replaceTmpNotes(const char *const notesPath, const char *const tmpPath) {
     rename(tmpPath, notesPath);
 }
 
-void edit(const char *const &notesPath, const char *const &editor) {
-    system((std::string(editor) + ' ' + notesPath).c_str());
-}
-
-void change(const short &note, char **const &toChangeWith, const short &len,
-            const std::string &homeDir, const char *const &notesPath) {
-    std::string tmpPath = homeDir + "/tmp.txt";
-    FILE *notes_f = fopen(notesPath, "r"), *tmp_f = fopen(tmpPath.c_str(), "w");
-
-    check<bool>(!notes_f, "Couldn't open notes file. You probably don't have any notes yet.");
-    check<bool>(!tmp_f, "Couldn't open a temporary file!!");
-
-    const short lastN = countNumLines(notes_f);
-    check<bool>(note > lastN || note <= 0, "The note you want to change doesn't exist!!");
-
-    copyLines(notes_f, tmp_f, note - 1);   // Copy all the notes before the note to change
-    skipLines(notes_f, 1);                 // Skip the like to be changed
-    for (short i = 0; i < len; ++i)        // Put the new line in its place
-        fprintf(tmp_f, "%s ", toChangeWith[i]);
-    fputc('\n', tmp_f);
-    copyLines(notes_f, tmp_f, lastN - note);
-
-    fclose(notes_f);
-    fclose(tmp_f);
-
-    replaceTmpNotes(notesPath, tmpPath.c_str());
+char lower(const char &letter) {
+    if ((letter >= 'A') && (letter <= 'Z'))
+        return (letter + 32);
+    else
+        return letter;
 }
