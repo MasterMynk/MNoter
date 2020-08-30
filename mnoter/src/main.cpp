@@ -54,7 +54,7 @@ int main(int argc, char *argv[]) {
                 break;
             }
         } else if (lower(argv[i][0]) == 'r') {   // Remove
-            remove(&argv[i + 1], argc - (i + 1), homeDir, notesPath.c_str());
+            remove(&argv[i + 1], argc - (i + 1), homeDir, notesPath.c_str(), flags);
             break;
         } else if (argv[i][0] == 'm') {   // Move
             move(&argv[i + 1], argc - (i + 1), homeDir, notesPath.c_str());

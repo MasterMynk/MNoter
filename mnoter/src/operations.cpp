@@ -28,11 +28,11 @@ void show(const char *const &notesPath) {
 }
 
 void remove(char **const &notes, short len, const std::string &homeDir,
-            const char *const &notesPath) {
+            const char *const &notesPath, uint8_t &flags) {
     std::string tmpPath = homeDir + "/tmp.txt";
-
     FILE *notes_f = fopen(notesPath, "r"), *tmp_f = fopen(tmpPath.c_str(), "w");
     short notesToRem[!len ? 1 : len];
+    uint8_t offset = 0;
 
     check<bool>(!notes_f, "Couldn't open notes file!!");
     check<bool>(!tmp_f, "Couldn't open a temporary file!!");
@@ -43,9 +43,20 @@ void remove(char **const &notes, short len, const std::string &homeDir,
         len = 1;
     } else
         for (short j = 0; j < len; ++j) {
-            check<bool>(!isNum(notes[j]), (std::string(notes[j]) + " is now a number!!").c_str());
-            notesToRem[j] = toInt(notes[j]);
+            if (notes[j][0] == '-')
+                if (notes[j][1] == 's' || notes[j][2] == 's') {
+                    flags |= SILENT_BIT;
+                    ++offset;
+                } else
+                    error((std::string("Unrecognized flag ") + notes[j]).c_str());
+            else {
+                check<bool>(!isNum(notes[j]),
+                            (std::string(notes[j]) + " is not a number!!").c_str());
+                notesToRem[j - offset] = toInt(notes[j]);
+            }
         }
+
+    len -= offset;
 
     const short lastN = countNumLines(notes_f);
 
