@@ -19,5 +19,5 @@ void move(char **const &argv, const short &len, const std::string &homeDir,
 void edit(char **const &argv, const short &len, const char *const &notesPath, char *&editorStr,
           uint8_t &flags);
 void change(char **argv, short len, const std::string &homeDir, const char *const &notesPath);
-void clear(const char *const &notesPath, uint8_t &flags);
+void clear(char **const &argv, const short &len, const char *const &notesPath, uint8_t &flags);
 void backup(char **const &argv, const short &len, const char *const notesPath);

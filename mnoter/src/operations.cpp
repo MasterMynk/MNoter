@@ -304,9 +304,17 @@ void change(char **argv, short len, const std::string &homeDir, const char *cons
     replaceTmpNotes(notesPath, tmpPath.c_str());
 }
 
-void clear(const char *const &notesPath, uint8_t &flags) {
+void clear(char **const &argv, const short &len, const char *const &notesPath, uint8_t &flags) {
     FILE *notes_f;
     char inp;
+
+    for (short i = 0; i < len; ++i)
+        if (argv[i][0] == '-') {
+            if (argv[i][1] == 's' || argv[i][2] == 's')   // Silent flag
+                flags |= SILENT_BIT;
+            else if (argv[i][1] == 'n' || argv[i][2] == 'n')   // Editor flag
+                flags |= NO_ASK_BIT;
+        }
 
     if (!(flags & NO_ASK_BIT)) {
         printf("Are you sure you want to delete all your notes [y/n]: ");
