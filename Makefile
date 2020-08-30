@@ -1,12 +1,11 @@
 EXEC:=mnoter
 TARGETS:=${EXEC} # Any additional library should be add before executable
 DEFS:=VERSION=\\\"1.4.1\\\" # Idk why so many \ are needed but this is the way it works
-ARGS:=edit -s --editor="vim"
+ARGS:=--help
 
 export SHELL:=/bin/bash
-DEBUGFLAG:=-g
-CMAKEDEBUGFLAG:=--config Debug
-export CFLAGS:=-Wall -std=c++20 ${DEBUGFLAG} $(shell for i in ${DEFS}; do echo "-D$$i"; done)
+CMAKEFLAGS:=--config Debug
+export CFLAGS:=-Wall -O3 -std=c++20 $(shell for i in ${DEFS}; do echo "-D$$i"; done)
 export OFLAG:=-o
 export RM:=rm -rf
 export AR:=ar rcs
@@ -34,7 +33,7 @@ all:
 		if [ -f "$$i/CMakeLists.txt" ]; then\
 			if [ ! -d "${BINDIR}/$$i" ]; then ${BINDIR}/$$i; fi;\
 			cmake -S $$i/ -B ${BINDIR}/$$i/ -G Ninja;\
-			cmake --build ${BINDIR}/$$i ${CMAKEDEBUGFLAG};\
+			cmake --build ${BINDIR}/$$i ${CMAKEFLAGS};\
 			echo -e "\x1b[37;1m--------------------------------------------------\x1b[0m";\
 		else\
 			$(MAKE) -C $$i/;\
