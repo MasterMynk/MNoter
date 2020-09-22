@@ -2,10 +2,9 @@ EXEC:=mnoter
 TARGETS:=${EXEC} # Any additional library should be add before executable
 DEFS:=VERSION=\\\"1.4.1\\\" # Idk why so many \ are needed but this is the way it works
 ARGS:=--help
-
-export SHELL:=/bin/bash
+SHELL:=/bin/bash
 CMAKEFLAGS:=--config Debug
-export CFLAGS:=-Wall -O3 -std=c++20 $(shell for i in ${DEFS}; do echo "-D$$i"; done)
+export CFLAGS:=-Wall -O3 -std=c++17 -lstdc++fs $(shell for i in ${DEFS}; do echo "-D$$i"; done)
 export OFLAG:=-o
 export RM:=rm -rf
 export AR:=ar rcs
